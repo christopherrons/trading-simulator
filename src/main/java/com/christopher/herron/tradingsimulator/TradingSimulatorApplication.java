@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 //TODO: Replace Greetings with Order Controller and HTML
 //TODO: Add Ask html div

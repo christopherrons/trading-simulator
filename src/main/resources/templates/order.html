@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div id="container">
+    <div id="orderForm">
+        <h1>Formet</h1>
+        <form action="#" th:action="@{/orders}" th:object="${orders}" method="post">
+            <p>Price: <input type="text" th:field="*{price}"/></p>
+            <p>Quantity: <input type="text" th:field="*{quantity}"/></p>
+            <p>Order Type</p>
+            <li>
+                <ul>
+                    <li><label><input type="radio" name="form-setup" value="1" th:field="*{orderType}"> Buy </label>
+                    </li>
+                    <li><label><input type="radio" name="form-setup" value="2" th:field="*{orderType}"> Sell </label>
+                    </li>
+                </ul>
+            </li>
+            <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+        </form>
+    </div>
+</div>
+</body>
+</html>

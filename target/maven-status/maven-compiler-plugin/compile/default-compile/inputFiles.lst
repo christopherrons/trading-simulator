@@ -1,8 +1,8 @@
 /home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/common/enumerators/OrderTypeEnum.java
-/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/Order.java
-/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/GreetingController.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/OrderBook.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/controller/OrderController.java
 /home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/common/enumerators/PriceTypeEnum.java
-/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/OrderController.java
-/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/PriceItem.java
-/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/Greeting.java
-/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/TradingSimulatorApplication.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/Order.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/PriceItem.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/OrderService.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/TradingSimulatorApplication.java

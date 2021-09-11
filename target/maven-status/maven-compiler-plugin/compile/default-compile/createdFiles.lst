@@ -1,8 +1,10 @@
 com/christopher/herron/tradingsimulator/domain/OrderBook.class
-com/christopher/herron/tradingsimulator/TradingSimulatorApplication.class
 com/christopher/herron/tradingsimulator/domain/OrderBook$1.class
 com/christopher/herron/tradingsimulator/domain/PriceItem.class
 com/christopher/herron/tradingsimulator/common/enumerators/OrderTypeEnum.class
 com/christopher/herron/tradingsimulator/domain/Order.class
+com/christopher/herron/tradingsimulator/controller/MatchingEngineController.class
+com/christopher/herron/tradingsimulator/service/MatchingEngineService.class
+com/christopher/herron/tradingsimulator/domain/MatchingEngine.class
+com/christopher/herron/tradingsimulator/TradingSimulatorApplication.class
 com/christopher/herron/tradingsimulator/common/enumerators/PriceTypeEnum.class
-com/christopher/herron/tradingsimulator/service/OrderService.class

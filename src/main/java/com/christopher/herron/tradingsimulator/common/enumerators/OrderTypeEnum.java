@@ -14,10 +14,6 @@ public enum OrderTypeEnum {
         this.value = value;
     }
 
-    public short getValue() {
-        return value;
-    }
-
     public static OrderTypeEnum fromValue(short value) {
         switch (value) {
             case 1:
@@ -27,6 +23,10 @@ public enum OrderTypeEnum {
             default:
                 return NONE;
         }
+    }
+
+    public short getValue() {
+        return value;
     }
 }
 

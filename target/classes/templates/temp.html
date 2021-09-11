@@ -1,19 +1,11 @@
 <!DOCTYPE HTML>
-<html xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Getting Started: Handling Form Submission</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <div id="container">
-    <div id="OrderResult">
-        <h1>Result</h1>
-        <p th:text="'Price: ' + ${order.price}"></p>
-        <p th:text="'Quantity: ' + ${order.quantity}"></p>
-        <p th:text="'Order Type: ' + ${order.orderType}"></p>
-        <p th:text="'Order Id: ' + ${order.orderId}"></p>
-        <a href="/orders">Submit another message</a>
-    </div>
     <div id="buyOrders">
         <h2>Buy Orders</h2>
         <table class=table table-striped>
@@ -46,5 +38,4 @@
     </div>
 </div>
 </body>
-
 </html>

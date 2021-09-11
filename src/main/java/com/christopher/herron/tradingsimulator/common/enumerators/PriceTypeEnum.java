@@ -15,10 +15,6 @@ public enum PriceTypeEnum {
         this.value = value;
     }
 
-    public short getValue() {
-        return value;
-    }
-
     public static PriceTypeEnum fromValue(short value) {
         switch (value) {
             case 1:
@@ -30,5 +26,9 @@ public enum PriceTypeEnum {
             default:
                 return NONE;
         }
+    }
+
+    public short getValue() {
+        return value;
     }
 }

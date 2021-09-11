@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
+
+<div th:fragment="orderForm">
+    <h2>Enter Order</h2>
+    <form action="#" th:action="@{/matchingEngine}" th:object="${order}" method="post">
+        <p>Price: <input type="text" th:field="*{price}"/></p>
+        <p>Quantity: <input type="text" th:field="*{quantity}"/></p>
+        <p>Order Type</p>
+        <li>
+            <ul>
+                <li><label><input type="radio" name="form-setup" value="1" th:field="*{orderType}"> Buy </label>
+                </li>
+                <li><label><input type="radio" name="form-setup" value="2" th:field="*{orderType}"> Sell </label>
+                </li>
+            </ul>
+        </li>
+        <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+    </form>
+</div>

@@ -1,4 +1,5 @@
 /home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/common/enumerators/OrderTypeEnum.java
+/home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/utils/MatchingEngineUtils.java
 /home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/OrderBook.java
 /home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/controller/MatchingEngineController.java
 /home/christopher/versioned/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/Trade.java

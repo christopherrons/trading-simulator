@@ -1,6 +1,9 @@
 package com.christopher.herron.tradingsimulator.domain;
 
+import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
+import com.christopher.herron.tradingsimulator.data.cache.ClientCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -10,11 +13,16 @@ public class OrderBook {
 
     private final Map<Long, PriorityQueue<Order>> buyPriceToOrders = new TreeMap<>(Collections.reverseOrder());
     private final Map<Long, PriorityQueue<Order>> sellPriceToOrders = new TreeMap<>();
+    private final ClientCache clientCache;
+    private long orderNumber;
 
-    public OrderBook() {
+    @Autowired
+    public OrderBook(ClientCache clientCache) {
+        this.clientCache = clientCache;
     }
 
     public void addOrder(final Order order) {
+        orderNumber++;
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
                 buyPriceToOrders.computeIfAbsent(order.getPrice(), value -> new PriorityQueue<>()).add(order);
@@ -77,17 +85,23 @@ public class OrderBook {
 
     private void removeBestBuyOrder() {
         PriorityQueue<Order> priorityQueueBestBuyOrder = buyPriceToOrders.values().iterator().next();
-        Order removedOrder = priorityQueueBestBuyOrder.poll();
+        Order order = priorityQueueBestBuyOrder.poll();
         if (priorityQueueBestBuyOrder.isEmpty()) {
-            buyPriceToOrders.remove(removedOrder.getPrice());
+            buyPriceToOrders.remove(order.getPrice());
         }
+        clientCache.updateClientOrderStatus(order.getClientId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
     }
 
     private void removeBestSellOrder() {
         PriorityQueue<Order> priorityQueueBestSellOrder = sellPriceToOrders.values().iterator().next();
-        Order removedOrder = priorityQueueBestSellOrder.poll();
+        Order order = priorityQueueBestSellOrder.poll();
         if (priorityQueueBestSellOrder.isEmpty()) {
-            sellPriceToOrders.remove(removedOrder.getPrice());
+            sellPriceToOrders.remove(order.getPrice());
         }
+        clientCache.updateClientOrderStatus(order.getClientId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
+    }
+
+    public long getOrderNumber() {
+        return orderNumber;
     }
 }

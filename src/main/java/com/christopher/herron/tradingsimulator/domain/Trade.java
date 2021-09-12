@@ -9,12 +9,14 @@ public class Trade {
     private final long quantity;
     private final long buyOrderId;
     private final long sellOrderId;
+    private final long tradeId;
 
-    public Trade(long price, long quantity, long buyOrderId, long sellOrderId) {
+    public Trade(long price, long quantity, long buyOrderId, long sellOrderId, long tradeId) {
         this.price = price;
         this.quantity = quantity;
         this.buyOrderId = buyOrderId;
         this.sellOrderId = sellOrderId;
+        this.tradeId = tradeId;
     }
 
     public long getPrice() {
@@ -35,5 +37,9 @@ public class Trade {
 
     public Date getTradeTimeStamp() {
         return tradeTimeStamp;
+    }
+
+    public long getTradeId() {
+        return tradeId;
     }
 }

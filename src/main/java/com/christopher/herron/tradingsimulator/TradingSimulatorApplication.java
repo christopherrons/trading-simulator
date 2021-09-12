@@ -3,15 +3,17 @@ package com.christopher.herron.tradingsimulator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-//TODO: How to deal with orders added below/above bid/ask
-//TODO: Add Ask html div
-// TODO Add Bid html div
-//TODO: Create Cacheing / DB system
-//TODO: Add matching for ask and bid prices
-//TODO: Add Last div
-//TODO: Add CSS + graph of last prices
-//TODO: Add Market + Limit order options
+//FIx how settlement price is set
+//TODO: Fix Struct of html and CSS
+//TODO: Fix names and OOP design
+//TODO: Fix background
 //TODO: Look at MVC pattern
+//TODO: How to handle trading with yourself
+
+//Nice to have
+//TODO: ADD metrics
+//TODO: Create Cacheing / DB systems
+
 @SpringBootApplication
 public class TradingSimulatorApplication {
 

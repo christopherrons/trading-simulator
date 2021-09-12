@@ -10,19 +10,23 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class MatchingEngineService {
+public class TradingEngineService {
 
     private final OrderBook orderBook;
     private final MatchingEngine matchingEngine;
 
     @Autowired
-    public MatchingEngineService(final OrderBook orderBook, final MatchingEngine matchingEngine) {
+    public TradingEngineService(final OrderBook orderBook, final MatchingEngine matchingEngine) {
         this.orderBook = orderBook;
         this.matchingEngine = matchingEngine;
     }
 
     public void addOrder(final Order order) {
         orderBook.addOrder(order);
+    }
+
+    public long getOrderNumber() {
+        return orderBook.getOrderNumber();
     }
 
     public List<Order> getBuyOrders() {

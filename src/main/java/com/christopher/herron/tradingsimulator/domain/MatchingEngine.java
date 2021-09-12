@@ -19,7 +19,7 @@ public class MatchingEngine {
             }
 
             if (isMatch(buyOrder.getPrice(), sellOrder.getPrice())) {
-                addTrade(orderBook, buyOrder, sellOrder);
+                runSettlementProcess(orderBook, buyOrder, sellOrder);
 
             } else {
                 break;
@@ -31,14 +31,15 @@ public class MatchingEngine {
         return buyPrice >= sellPrice;
     }
 
-    private void addTrade(final OrderBook orderBook, final Order buyOrder, final Order sellOrder) {
+    private void runSettlementProcess(final OrderBook orderBook, final Order buyOrder, final Order sellOrder) {
         Trade trade = createTrade(buyOrder, sellOrder);
         trades.add(trade);
         updateOrderBookAfterTrade(orderBook, buyOrder, sellOrder, trade.getQuantity());
     }
+
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {
-        long quantityTraded = quantityTraded(buyOrder.getQuantity(), sellOrder.getQuantity());
-        return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId());
+        long quantityTraded = quantityTraded(buyOrder.getCurrentQuantity(), sellOrder.getCurrentQuantity());
+        return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), trades.size() + 1);
     }
 
     private void updateOrderBookAfterTrade(final OrderBook orderBook, final Order buyOrder, final Order sellOrder, final long quantityTraded) {

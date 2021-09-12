@@ -3,12 +3,12 @@
       xmlns:th="http://thymeleaf.org">
 <head>
     <title>Getting Started: Handling Form Submission</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="css/mall-reset.css">
-    <link rel="stylesheet" href="css/style.css">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <link href="css/mall-reset.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-<div id="container" class="wrapper">
+<div class="wrapper" id="container">
 
     <div id="header">
         <header>
@@ -23,37 +23,58 @@
         </nav>
     </div>
 
-    <div id="forms" class="forms">
+    <div class="forms" id="forms">
         <div id="orderForm">
-            <h2>Enter Order</h2>
-            <form action="#" th:action="@{/matchingEngine}" th:object="${order}" method="post">
-                <label>Price: <input type="text" th:field="*{price}"/></label>
-                <label>Quantity: <input type="text" th:field="*{quantity}"/></label>
+            <h2>Create Order</h2>
+            <form action="#" method="post" th:action="@{/tradingEngine}" th:object="${order}">
                 <p>Order Type</p>
-                <li>
+                <li id="buySellRadio">
                     <ul>
-                        <li><label><input type="radio" name="form-setup" value="1" th:field="*{orderType}"> Buy </label>
+                        <li><label><input name="form-setup" th:field="*{orderType}" type="radio" value="1"
+                                          checked="checked">Buy</label>
                         </li>
-                        <li><label><input type="radio" name="form-setup" value="2" th:field="*{orderType}"> Sell
-                        </label>
+                        <li><label><input name="form-setup" th:field="*{orderType}" type="radio" value="2">Sell</label>
                         </li>
                     </ul>
                 </li>
-                <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+                <label>Price</label>
+                <input min="1" placeholder="Enter Price..." th:field="*{price}" type="number"/>
+                <label>Quantity</label>
+                <input min="1" placeholder="Enter Quantity..." th:field="*{initialQuantity}" type="number"/>
+                <p><input type="submit" value="Submit"/></p>
             </form>
+        </div>
+
+        <div id="userInfo">
+            <h2>User Orders</h2>
+            <div id="openOrderDiv" style="display:block" class="tabcontent">
+                <table id="Open" class=table table-striped>
+                    <tr>
+                        <th>Order Type</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Order Id</th>
+                    </tr>
+                    <tr id="openOrders" th:each="order : ${openOrders}">
+                        <td th:text="${order.orderType} == 1 ? 'BID' : 'ASK'"></td>
+                        <td th:text="${order.price}"></td>
+                        <td th:text="${order.currentQuantity}"></td>
+                        <td th:text="${order.orderId}"></td>
+                </table>
+            </div>
         </div>
 
         <div id="simulationForm">
             <h2>Trade Simulation Settings</h2>
-            <form action="#" th:action="@{/matchingEngine}" th:object="${order}" method="post">
-                <p>Price: <input type="text" th:field="*{price}"/></p>
-                <p>Quantity: <input type="text" th:field="*{quantity}"/></p>
+            <form action="#" method="post" th:action="@{/tradingEngine}" th:object="${order}">
+                <p>Price: <input th:field="*{price}" type="text"/></p>
+                <p>Quantity: <input th:field="*{initialQuantity}" type="text"/></p>
                 <p>Order Type</p>
                 <li>
                     <ul>
-                        <li><label><input type="radio" name="form-setup" value="1" th:field="*{orderType}"> Buy </label>
+                        <li><label><input name="form-setup" th:field="*{orderType}" type="radio" value="1"> Buy </label>
                         </li>
-                        <li><label><input type="radio" name="form-setup" value="2" th:field="*{orderType}"> Sell
+                        <li><label><input name="form-setup" th:field="*{orderType}" type="radio" value="2"> Sell
                         </label>
                         </li>
                     </ul>
@@ -63,30 +84,32 @@
         </div>
     </div>
 
-    <div id="tradingData" class="tradingData">
-        <div id="bidAsk" class="bidAsk">
+    <div class="tradingData" id="tradingData">
+        <div class="bidAsk" id="bidAsk">
             <h2>Order Book</h2>
-                <table class=table table-striped>
-                    <tr>
-                        <th>Order Type</th>
-                        <th>Order Id</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                    </tr>
-                    <tr id="buyOrders" th:each="order : ${buyOrders}">
-                        <td th:text="BID"></td>
-                        <td th:text="${order.orderId}"></td>
-                        <td th:text="${order.price}"></td>
-                        <td th:text="${order.quantity}"></td>
-                    </tr>
-                    <tr id="sellOrders" th:each="order : ${sellOrders}">
-                        <td th:text="ASK"></td>
-                        <td th:text="${order.orderId}"></td>
-                        <td th:text="${order.price}"></td>
-                        <td th:text="${order.quantity}"></td>
-                    </tr>
-                </table>
+            <table class=bidAskTable table-striped>
+                <tr>
+                    <th>Order Type</th>
+                    <th>Order Id</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                </tr>
+                <tr id="buyOrders" th:each="order : ${buyOrders}">
+                    <td th:text="BID"></td>
+                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${order.price}"></td>
+                    <td th:text="${order.currentQuantity}"></td>
+                </tr>
+                <tr id="sellOrders" th:each="order : ${sellOrders}">
+                    <td th:text="ASK"></td>
+                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${order.price}"></td>
+                    <td th:text="${order.currentQuantity}"></td>
+                </tr>
+            </table>
         </div>
+
+        <div id="tradesPlot"></div>
 
         <div id="trades">
             <h2>Trades</h2>
@@ -106,13 +129,54 @@
             </table>
         </div>
     </div>
-
-    <div id="footer">
-        <footer>
-            <p>Trading Simulation @Copyright Christopher Herron</p>
-        </footer>
-    </div>
-
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script th:inline="javascript">
+    $(function(){
+    Highcharts.chart('tradesPlot', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'CDAQ'
+        },
+        subtitle: {
+            text: 'Settlement Prices'
+        },
+        xAxis: {
+            categories: [[${tradesGraph.keySet()}]],
+            crosshair: true
+
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Price'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:1">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'CDAQ - Settlement Prices',
+            data: [[${tradesGraph.values()}]]
+        }]
+    });
+    });
+</script>
 </body>
 </html>

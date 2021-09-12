@@ -1,8 +1,9 @@
-package com.christopher.herron.tradingsimulator.domain;
+package com.christopher.herron.tradingsimulator.domain.tradeplatform;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
-import com.christopher.herron.tradingsimulator.data.cache.ClientCache;
+import com.christopher.herron.tradingsimulator.domain.cache.UserCache;
+import com.christopher.herron.tradingsimulator.domain.transactions.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +14,12 @@ public class OrderBook {
 
     private final Map<Long, PriorityQueue<Order>> buyPriceToOrders = new TreeMap<>(Collections.reverseOrder());
     private final Map<Long, PriorityQueue<Order>> sellPriceToOrders = new TreeMap<>();
-    private final ClientCache clientCache;
+    private final UserCache userCache;
     private long orderNumber;
 
     @Autowired
-    public OrderBook(ClientCache clientCache) {
-        this.clientCache = clientCache;
+    public OrderBook(UserCache userCache) {
+        this.userCache = userCache;
     }
 
     public void addOrder(final Order order) {
@@ -89,7 +90,7 @@ public class OrderBook {
         if (priorityQueueBestBuyOrder.isEmpty()) {
             buyPriceToOrders.remove(order.getPrice());
         }
-        clientCache.updateClientOrderStatus(order.getClientId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
+        userCache.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
     }
 
     private void removeBestSellOrder() {
@@ -98,10 +99,10 @@ public class OrderBook {
         if (priorityQueueBestSellOrder.isEmpty()) {
             sellPriceToOrders.remove(order.getPrice());
         }
-        clientCache.updateClientOrderStatus(order.getClientId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
+        userCache.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
     }
 
-    public long getOrderNumber() {
+    public long getTotalNrOfOrdersEntered() {
         return orderNumber;
     }
 }

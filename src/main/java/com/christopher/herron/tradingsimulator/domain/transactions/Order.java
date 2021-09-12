@@ -1,8 +1,8 @@
-package com.christopher.herron.tradingsimulator.domain;
+package com.christopher.herron.tradingsimulator.domain.transactions;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 
-import java.util.Date;
+import java.time.Instant;
 
 public class Order implements Comparable<Order> {
 
@@ -11,12 +11,25 @@ public class Order implements Comparable<Order> {
     private short orderType;
     private long orderId;
     private long price;
-    private Date timeStamp = new Date();
-    private String clientId;
+    private Instant timeStamp = Instant.now();
+    private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
 
 
     public Order() {
+    }
+
+    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long quantity, long price, short orderType) {
+        Order order = new Order();
+        order.setOrderId(orderId);
+        order.setUserId(userId);
+        order.setOrderStatus(orderStatus);
+        order.setTimeStamp(timeStamp);
+        order.setCurrentQuantity(quantity);
+        order.setInitialQuantity(quantity);
+        order.setPrice(price);
+        order.setOrderType(orderType);
+        return order;
     }
 
     public short getOrderType() {
@@ -60,11 +73,11 @@ public class Order implements Comparable<Order> {
         this.price = price;
     }
 
-    public Date getTimeStamp() {
+    public Instant getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Date timeStamp) {
+    public void setTimeStamp(Instant timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -76,12 +89,12 @@ public class Order implements Comparable<Order> {
         return this.currentQuantity == 0;
     }
 
-    public String getClientId() {
-        return clientId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public short getOrderStatus() {

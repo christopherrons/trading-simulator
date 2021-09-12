@@ -66,20 +66,11 @@
 
         <div id="simulationForm">
             <h2>Trade Simulation Settings</h2>
-            <form action="#" method="post" th:action="@{/tradingEngine}" th:object="${order}">
-                <p>Price: <input th:field="*{price}" type="text"/></p>
-                <p>Quantity: <input th:field="*{initialQuantity}" type="text"/></p>
+            <form action="#" method="post" th:action="@{/tradingEngine}" th:object="${tradeSimulator}">
                 <p>Order Type</p>
-                <li>
-                    <ul>
-                        <li><label><input name="form-setup" th:field="*{orderType}" type="radio" value="1"> Buy </label>
-                        </li>
-                        <li><label><input name="form-setup" th:field="*{orderType}" type="radio" value="2"> Sell
-                        </label>
-                        </li>
-                    </ul>
-                </li>
-                <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+                <label>Generate Orders</label>
+                <input min="1" placeholder="Enter Number of Orders to generate..." th:field="*{ordersToGenerate}" type="number"/>
+               <p><input type="submit" value="Generate"/></p>
             </form>
         </div>
     </div>
@@ -130,6 +121,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>

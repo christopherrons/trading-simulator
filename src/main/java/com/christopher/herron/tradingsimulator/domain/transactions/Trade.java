@@ -1,10 +1,10 @@
-package com.christopher.herron.tradingsimulator.domain;
+package com.christopher.herron.tradingsimulator.domain.transactions;
 
-import java.util.Date;
+import java.time.Instant;
 
 public class Trade {
 
-    private final Date tradeTimeStamp = new Date();
+    private final Instant tradeTimeStamp = Instant.now();
     private final long price;
     private final long quantity;
     private final long buyOrderId;
@@ -35,7 +35,7 @@ public class Trade {
         return sellOrderId;
     }
 
-    public Date getTradeTimeStamp() {
+    public Instant getTradeTimeStamp() {
         return tradeTimeStamp;
     }
 

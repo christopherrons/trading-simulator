@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain;
+package com.christopher.herron.tradingsimulator.domain.transactions;
 
 public class PriceItem {
 

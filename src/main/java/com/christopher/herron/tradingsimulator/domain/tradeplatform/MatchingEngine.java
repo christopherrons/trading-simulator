@@ -1,15 +1,22 @@
-package com.christopher.herron.tradingsimulator.domain;
+package com.christopher.herron.tradingsimulator.domain.tradeplatform;
 
+import com.christopher.herron.tradingsimulator.domain.transactions.Order;
+import com.christopher.herron.tradingsimulator.domain.transactions.Trade;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class MatchingEngine {
-    private final List<Trade> trades = new ArrayList<>();
 
-    public void matchOrders(final OrderBook orderBook) {
+    private final TradePlatform tradePlatform;
+
+    @Autowired
+    public MatchingEngine(TradePlatform tradePlatform) {
+        this.tradePlatform = tradePlatform;
+    }
+
+    public void matchOrders() {
+        OrderBook orderBook = tradePlatform.getOrderBook();
         while (true) {
             Order buyOrder = orderBook.getBestBuyOrder();
             Order sellOrder = orderBook.getBestSellOrder();
@@ -33,13 +40,17 @@ public class MatchingEngine {
 
     private void runSettlementProcess(final OrderBook orderBook, final Order buyOrder, final Order sellOrder) {
         Trade trade = createTrade(buyOrder, sellOrder);
-        trades.add(trade);
+        tradePlatform.addTrade(trade);
         updateOrderBookAfterTrade(orderBook, buyOrder, sellOrder, trade.getQuantity());
     }
 
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {
         long quantityTraded = quantityTraded(buyOrder.getCurrentQuantity(), sellOrder.getCurrentQuantity());
-        return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), trades.size() + 1);
+        if (isBuyTaker(buyOrder, sellOrder)) {
+            return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradePlatform.getTrades().size() + 1);
+        } else {
+            return new Trade(sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradePlatform.getTrades().size() + 1);
+        }
     }
 
     private void updateOrderBookAfterTrade(final OrderBook orderBook, final Order buyOrder, final Order sellOrder, final long quantityTraded) {
@@ -54,7 +65,9 @@ public class MatchingEngine {
         return buyOrder == null || sellOrder == null;
     }
 
-    public List<Trade> getTrades() {
-        return trades;
+    private boolean isBuyTaker(final Order buyOrder, final Order sellOrder) {
+        return buyOrder.getTimeStamp().toEpochMilli() > sellOrder.getTimeStamp().toEpochMilli();
     }
+
+
 }

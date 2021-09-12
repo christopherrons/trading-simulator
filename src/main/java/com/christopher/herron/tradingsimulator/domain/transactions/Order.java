@@ -15,7 +15,6 @@ public class Order implements Comparable<Order> {
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
 
-
     public Order() {
     }
 

@@ -34,24 +34,13 @@ public class OrderService {
         this.matchingEngine = matchingEngine;
     }
 
-    public String orderPostRequest(@ModelAttribute Order order, Model model) {
+    public void addOrderEntry(@ModelAttribute Order order) {
         order.setOrderId(tradePlatform.getTotalNrOfOrdersEntered() + 1);
         order.setUserId(USER);
         tradePlatform.addUserOrder(order);
 
         addOrder(order);
         matchOrders();
-
-        model.addAttribute("tradeSimulator", new TradeSimulator());
-        model.addAttribute("trades", getNLatestTrades(MAX_TRADES_IN_TABLE));
-        model.addAttribute("buyOrders", getNBestBuyOrders(MAX_ORDERBOOK_ORDERS_IN_TABLE));
-        model.addAttribute("sellOrders", getNBestSellOrders(MAX_ORDERBOOK_ORDERS_IN_TABLE));
-        Map<Instant, Long> trades = tradePlatform.getTrades().stream()
-                .collect(Collectors.toMap(Trade::getTradeTimeStamp, Trade::getPrice));
-        model.addAttribute("tradesGraph", trades);
-        model.addAttribute("openOrders", tradePlatform.getNUserOrders(MAX_USER_ORDERS_IN_TABLE, USER, OrderStatusEnum.OPEN));
-
-        return "index";
     }
 
     public String runSimulationPostRequest(@ModelAttribute TradeSimulator tradeSimulator, Model model) throws InterruptedException {

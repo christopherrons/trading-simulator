@@ -15,17 +15,15 @@ public class UserCache {
 
     public Map<String, User> userIdToUser = new LinkedHashMap<>();
 
-    public List<Order> getNUserOrders(int maxUserOrders, String userId, OrderStatusEnum orderStatus) {
-        List<Order> orders = userIdToUser.get(userId).getUserOrders(orderStatus);
-        Collections.reverse(orders);
-        return orders.size() > maxUserOrders ? orders.subList(orders.size() - maxUserOrders, orders.size()) : orders;
+    public User getUser(final String userId) {
+        return userIdToUser.get(userId);
     }
 
-    public void addUserOrder(Order order) {
-        userIdToUser.computeIfAbsent(order.getUserId(), value -> new User(order.getUserId())).addOrder(order);
+    public void addUserOrder(final Order order) {
+        userIdToUser.computeIfAbsent(order.getUserId(), User::new).addOrder(order);
     }
 
-    public void updateUserOrderStatus(String userId, long orderId, OrderStatusEnum currentOrderStatus, OrderStatusEnum newOrderStatus) {
+    public void updateUserOrderStatus(final String userId, final long orderId, final OrderStatusEnum currentOrderStatus, final OrderStatusEnum newOrderStatus) {
         userIdToUser.get(userId).updateUserOrderStatus(orderId, currentOrderStatus, newOrderStatus);
     }
 

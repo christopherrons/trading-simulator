@@ -26,10 +26,10 @@ public class OrderBook {
         orderNumber++;
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
-                buyPriceToOrders.computeIfAbsent(order.getPrice(), value -> new PriorityQueue<>()).add(order);
+                buyPriceToOrders.computeIfAbsent(order.getPrice(), key -> new PriorityQueue<>()).add(order);
                 break;
             case SELL:
-                sellPriceToOrders.computeIfAbsent(order.getPrice(), value -> new PriorityQueue<>()).add(order);
+                sellPriceToOrders.computeIfAbsent(order.getPrice(), key -> new PriorityQueue<>()).add(order);
                 break;
             default:
                 break;

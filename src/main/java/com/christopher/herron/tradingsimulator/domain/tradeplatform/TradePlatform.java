@@ -52,10 +52,6 @@ public class TradePlatform {
         userCache.addUserOrder(order);
     }
 
-    public List<Order> getNUserOrders(final int max_user_orders_in_table, final String user, final OrderStatusEnum open) {
-        return userCache.getNUserOrders(max_user_orders_in_table, user, open);
-    }
-
     public int getTotalNrOfUsers() {
         return userCache.getTotalNrOfUsers();
     }

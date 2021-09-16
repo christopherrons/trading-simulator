@@ -21,12 +21,12 @@ public class User {
         return userId;
     }
 
-    public List<Order> getUserOrders(OrderStatusEnum orderStatus) {
-        return new ArrayList<>(orderStatusToOrder.computeIfAbsent(orderStatus, value -> new LinkedHashMap<>()).values());
+    public List<Order> getUserOpenOrders() {
+        return new ArrayList<>(orderStatusToOrder.computeIfAbsent(OrderStatusEnum.OPEN, key -> new LinkedHashMap<>()).values());
     }
 
     public void addOrder(Order order) {
-        orderStatusToOrder.computeIfAbsent(OrderStatusEnum.fromValue(order.getOrderStatus()), value -> new LinkedHashMap<>()).put(order.getOrderId(), order);
+        orderStatusToOrder.computeIfAbsent(OrderStatusEnum.fromValue(order.getOrderStatus()), key -> new LinkedHashMap<>()).put(order.getOrderId(), order);
     }
 
     public void updateUserOrderStatus(long orderId, OrderStatusEnum currentOrderStatus, OrderStatusEnum newOrderStatus) {

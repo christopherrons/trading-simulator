@@ -2,9 +2,8 @@ package com.christopher.herron.tradingsimulator.domain.tradeplatform;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
-import com.christopher.herron.tradingsimulator.domain.cache.UserCache;
-import com.christopher.herron.tradingsimulator.domain.transactions.Order;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.service.UserService;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -14,16 +13,15 @@ public class OrderBook {
 
     private final Map<Long, PriorityQueue<Order>> buyPriceToOrders = new TreeMap<>(Collections.reverseOrder());
     private final Map<Long, PriorityQueue<Order>> sellPriceToOrders = new TreeMap<>();
-    private final UserCache userCache;
-    private long orderNumber;
+    private final UserService userService;
+    private long totalNumberOfOrders;
 
-    @Autowired
-    public OrderBook(UserCache userCache) {
-        this.userCache = userCache;
+    public OrderBook(UserService userService) {
+        this.userService = userService;
     }
 
     public void addOrder(final Order order) {
-        orderNumber++;
+        totalNumberOfOrders++;
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
                 buyPriceToOrders.computeIfAbsent(order.getPrice(), key -> new PriorityQueue<>()).add(order);
@@ -41,7 +39,6 @@ public class OrderBook {
         for (PriorityQueue<Order> buyQueue : buyPriceToOrders.values()) {
             buyOrders.addAll(buyQueue);
         }
-        Collections.reverse(buyOrders);
         return buyOrders;
     }
 
@@ -72,8 +69,8 @@ public class OrderBook {
     }
 
     public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, final long quantityTraded) {
-        buyOrder.updateQuantity(quantityTraded);
-        sellOrder.updateQuantity(quantityTraded);
+        buyOrder.updateCurrentQuantity(quantityTraded);
+        sellOrder.updateCurrentQuantity(quantityTraded);
 
         if (buyOrder.isOrderFilled()) {
             removeBestBuyOrder();
@@ -90,7 +87,7 @@ public class OrderBook {
         if (priorityQueueBestBuyOrder.isEmpty()) {
             buyPriceToOrders.remove(order.getPrice());
         }
-        userCache.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
+        userService.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
     }
 
     private void removeBestSellOrder() {
@@ -99,10 +96,10 @@ public class OrderBook {
         if (priorityQueueBestSellOrder.isEmpty()) {
             sellPriceToOrders.remove(order.getPrice());
         }
-        userCache.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
+        userService.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
     }
 
-    public long getTotalNrOfOrdersEntered() {
-        return orderNumber;
+    public long generateOrderId() {
+        return totalNumberOfOrders + 1;
     }
 }

@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain.transactions;
+package com.christopher.herron.tradingsimulator.domain.model;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 
@@ -80,7 +80,7 @@ public class Order implements Comparable<Order> {
         this.timeStamp = timeStamp;
     }
 
-    public void updateQuantity(long quantityTraded) {
+    public void updateCurrentQuantity(long quantityTraded) {
         this.currentQuantity = this.currentQuantity - quantityTraded;
     }
 

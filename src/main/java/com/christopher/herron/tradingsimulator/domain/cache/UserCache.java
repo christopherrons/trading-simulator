@@ -1,19 +1,17 @@
 package com.christopher.herron.tradingsimulator.domain.cache;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
-import com.christopher.herron.tradingsimulator.domain.transactions.Order;
-import com.christopher.herron.tradingsimulator.domain.user.User;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.domain.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class UserCache {
 
-    public Map<String, User> userIdToUser = new LinkedHashMap<>();
+    public Map<String, User> userIdToUser = new ConcurrentHashMap<>();
 
     public User getUser(final String userId) {
         return userIdToUser.get(userId);
@@ -27,7 +25,7 @@ public class UserCache {
         userIdToUser.get(userId).updateUserOrderStatus(orderId, currentOrderStatus, newOrderStatus);
     }
 
-    public int getTotalNrOfUsers() {
-        return userIdToUser.keySet().size();
+    public int generateUserId() {
+        return userIdToUser.keySet().size() + 1;
     }
 }

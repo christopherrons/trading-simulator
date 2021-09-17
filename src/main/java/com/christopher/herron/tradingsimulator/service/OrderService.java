@@ -1,99 +1,37 @@
 package com.christopher.herron.tradingsimulator.service;
 
-import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.tradeplatform.MatchingEngine;
-import com.christopher.herron.tradingsimulator.domain.tradeplatform.TradePlatform;
-import com.christopher.herron.tradingsimulator.domain.tradeplatform.TradeSimulator;
-import com.christopher.herron.tradingsimulator.domain.transactions.Order;
-import com.christopher.herron.tradingsimulator.domain.transactions.Trade;
-import com.christopher.herron.tradingsimulator.domain.utils.TradePlatformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class OrderService {
 
-    private final int MAX_USER_ORDERS_IN_TABLE = 10;
-    private final int MAX_TRADES_IN_TABLE = 10;
-    private final int MAX_ORDERBOOK_ORDERS_IN_TABLE = 5;
     private final String USER = "CHR";
-    private final TradePlatform tradePlatform;
+    private final OrderBookService orderBookService;
     private final MatchingEngine matchingEngine;
+    private final UserService userService;
+
 
     @Autowired
-    public OrderService(TradePlatform tradePlatform, MatchingEngine matchingEngine) {
-        this.tradePlatform = tradePlatform;
+    public OrderService(OrderBookService orderBookService, MatchingEngine matchingEngine, UserService userService) {
+        this.orderBookService = orderBookService;
         this.matchingEngine = matchingEngine;
+        this.userService = userService;
     }
 
-    public void addOrderEntry(@ModelAttribute Order order) {
-        order.setOrderId(tradePlatform.getTotalNrOfOrdersEntered() + 1);
+    public void addOrderEntryTEMPCHRILLE(@ModelAttribute Order order) {
         order.setUserId(USER);
-        tradePlatform.addUserOrder(order);
-
         addOrder(order);
-        matchOrders();
     }
 
-    public String runSimulationPostRequest(@ModelAttribute TradeSimulator tradeSimulator, Model model) throws InterruptedException {
-        for (int i = 0; i < tradeSimulator.getOrdersToGenerate(); i++) {
-            Order order = Order.valueOf(
-                    tradePlatform.getTotalNrOfOrdersEntered() + 1,
-                    String.format("Bot: %s", tradePlatform.getTotalNrOfUsers() + 1),
-                    OrderStatusEnum.OPEN.getValue(),
-                    Instant.now(),
-                    TradePlatformUtils.generateQuantity(),
-                    TradePlatformUtils.generatePrice(),
-                    TradePlatformUtils.getRandomOrderType()
-            );
-            //  Thread.sleep(1);
-            tradePlatform.addUserOrder(order);
+    public void addOrder(@ModelAttribute Order order) {
+        order.setOrderId(orderBookService.generateOrderId());
+        userService.addUserOrder(order);
 
-            addOrder(order);
-            matchOrders();
-        }
-
-        model.addAttribute("order", new Order());
-        model.addAttribute("trades", getNLatestTrades(MAX_TRADES_IN_TABLE));
-        model.addAttribute("buyOrders", getNBestBuyOrders(MAX_ORDERBOOK_ORDERS_IN_TABLE));
-        model.addAttribute("sellOrders", getNBestSellOrders(MAX_ORDERBOOK_ORDERS_IN_TABLE));
-        Map<Instant, Long> trades = tradePlatform.getTrades().stream()
-                .collect(Collectors.toMap(Trade::getTradeTimeStamp, Trade::getPrice));
-        model.addAttribute("tradesGraph", trades);
-
-        return "index";
-    }
-
-    public List<Order> getNBestBuyOrders(final int maxOrdersInTable) {
-        List<Order> buyOrders = tradePlatform.getBuyOrders();
-        return buyOrders.size() > maxOrdersInTable ? buyOrders.subList(buyOrders.size() - maxOrdersInTable, buyOrders.size()) : buyOrders;
-    }
-
-    public List<Order> getNBestSellOrders(final int maxOrdersInTable) {
-        List<Order> sellOrders = tradePlatform.getSellOrders();
-        return sellOrders.size() > maxOrdersInTable ? sellOrders.subList(sellOrders.size() - maxOrdersInTable, sellOrders.size()) : sellOrders;
-    }
-
-    public List<Trade> getNLatestTrades(final int maxTradesInTable) {
-        List<Trade> trades = tradePlatform.getTrades();
-        Collections.reverse(trades);
-        return trades.size() > maxTradesInTable ? trades.subList(trades.size() - maxTradesInTable, trades.size()) : trades;
-    }
-
-    public void addOrder(final Order order) {
-        tradePlatform.addOrder(order);
-    }
-
-    public void matchOrders() {
+        orderBookService.addOrder(order);
         matchingEngine.matchOrders();
     }
-
 }

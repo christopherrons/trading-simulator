@@ -1,17 +1,16 @@
-package com.christopher.herron.tradingsimulator.domain.user;
+package com.christopher.herron.tradingsimulator.domain.model;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
-import com.christopher.herron.tradingsimulator.domain.transactions.Order;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class User {
 
     private final String userId;
-    private final Map<OrderStatusEnum, Map<Long, Order>> orderStatusToOrder = new LinkedHashMap<>();
+    private final Map<OrderStatusEnum, Map<Long, Order>> orderStatusToOrder = new ConcurrentHashMap<>();
 
     public User(String userId) {
         this.userId = userId;
@@ -21,12 +20,12 @@ public class User {
         return userId;
     }
 
-    public List<Order> getUserOpenOrders() {
-        return new ArrayList<>(orderStatusToOrder.computeIfAbsent(OrderStatusEnum.OPEN, key -> new LinkedHashMap<>()).values());
+    public List<Order> getOpenOrders() {
+        return new ArrayList<>(orderStatusToOrder.computeIfAbsent(OrderStatusEnum.OPEN, key -> new ConcurrentHashMap<>()).values());
     }
 
     public void addOrder(Order order) {
-        orderStatusToOrder.computeIfAbsent(OrderStatusEnum.fromValue(order.getOrderStatus()), key -> new LinkedHashMap<>()).put(order.getOrderId(), order);
+        orderStatusToOrder.computeIfAbsent(OrderStatusEnum.fromValue(order.getOrderStatus()), key -> new ConcurrentHashMap<>()).put(order.getOrderId(), order);
     }
 
     public void updateUserOrderStatus(long orderId, OrderStatusEnum currentOrderStatus, OrderStatusEnum newOrderStatus) {

@@ -1,32 +1,35 @@
 package com.christopher.herron.tradingsimulator.domain.tradeplatform;
 
-import com.christopher.herron.tradingsimulator.domain.transactions.Order;
-import com.christopher.herron.tradingsimulator.domain.transactions.Trade;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.domain.model.Trade;
+import com.christopher.herron.tradingsimulator.service.OrderBookService;
+import com.christopher.herron.tradingsimulator.service.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MatchingEngine {
 
-    private final TradePlatform tradePlatform;
+    private final TradeService tradeService;
+    private final OrderBookService orderBookService;
 
     @Autowired
-    public MatchingEngine(TradePlatform tradePlatform) {
-        this.tradePlatform = tradePlatform;
+    public MatchingEngine(TradeService tradeService, OrderBookService orderBookService) {
+        this.tradeService = tradeService;
+        this.orderBookService = orderBookService;
     }
 
     public void matchOrders() {
-        OrderBook orderBook = tradePlatform.getOrderBook();
         while (true) {
-            Order buyOrder = orderBook.getBestBuyOrder();
-            Order sellOrder = orderBook.getBestSellOrder();
+            Order buyOrder = orderBookService.getBestBuyOrder();
+            Order sellOrder = orderBookService.getBestSellOrder();
 
             if (isOneSided(buyOrder, sellOrder)) {
                 return;
             }
 
             if (isMatch(buyOrder.getPrice(), sellOrder.getPrice())) {
-                runSettlementProcess(orderBook, buyOrder, sellOrder);
+                runSettlementProcess(buyOrder, sellOrder);
 
             } else {
                 break;
@@ -38,23 +41,19 @@ public class MatchingEngine {
         return buyPrice >= sellPrice;
     }
 
-    private void runSettlementProcess(final OrderBook orderBook, final Order buyOrder, final Order sellOrder) {
+    private void runSettlementProcess(final Order buyOrder, final Order sellOrder) {
         Trade trade = createTrade(buyOrder, sellOrder);
-        tradePlatform.addTrade(trade);
-        updateOrderBookAfterTrade(orderBook, buyOrder, sellOrder, trade.getQuantity());
+        tradeService.addTrade(trade);
+        orderBookService.updateOrderBookAfterTrade(buyOrder, sellOrder, trade.getQuantity());
     }
 
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {
         long quantityTraded = quantityTraded(buyOrder.getCurrentQuantity(), sellOrder.getCurrentQuantity());
-        if (isBuyTaker(buyOrder, sellOrder)) {
-            return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradePlatform.getTrades().size() + 1);
+        if (isBuyOrderTaker(buyOrder, sellOrder)) {
+            return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId());
         } else {
-            return new Trade(sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradePlatform.getTrades().size() + 1);
+            return new Trade(sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId());
         }
-    }
-
-    private void updateOrderBookAfterTrade(final OrderBook orderBook, final Order buyOrder, final Order sellOrder, final long quantityTraded) {
-        orderBook.updateOrderBookAfterTrade(buyOrder, sellOrder, quantityTraded);
     }
 
     private long quantityTraded(final long buyQuantity, final long sellQuantity) {
@@ -65,7 +64,7 @@ public class MatchingEngine {
         return buyOrder == null || sellOrder == null;
     }
 
-    private boolean isBuyTaker(final Order buyOrder, final Order sellOrder) {
+    private boolean isBuyOrderTaker(final Order buyOrder, final Order sellOrder) {
         return buyOrder.getTimeStamp().toEpochMilli() > sellOrder.getTimeStamp().toEpochMilli();
     }
 

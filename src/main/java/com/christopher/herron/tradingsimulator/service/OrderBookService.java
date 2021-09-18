@@ -18,13 +18,8 @@ public class OrderBookService {
         this.orderBook = orderBook;
     }
 
-    public void addOrder(final Order order) {
-        readWriteLock.writeLock().lock();
-        try {
-            orderBook.addOrder(order);
-        } finally {
-            readWriteLock.writeLock().unlock();
-        }
+    public void addOrderToOrderBook(final Order order) {
+        orderBook.addOrderToOrderBook(order);
     }
 
     public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {

@@ -17,7 +17,7 @@ public class UserCache {
         return userIdToUser.get(userId);
     }
 
-    public void addUserOrder(final Order order) {
+    public void addOrderToUser(final Order order) {
         userIdToUser.computeIfAbsent(order.getUserId(), User::new).addOrder(order);
     }
 

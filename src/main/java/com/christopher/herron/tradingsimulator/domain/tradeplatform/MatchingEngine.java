@@ -67,6 +67,4 @@ public class MatchingEngine {
     private boolean isBuyOrderTaker(final Order buyOrder, final Order sellOrder) {
         return buyOrder.getTimeStamp().toEpochMilli() > sellOrder.getTimeStamp().toEpochMilli();
     }
-
-
 }

@@ -18,6 +18,7 @@ com/christopher/herron/tradingsimulator/common/enumerators/OrderTypeEnum.class
 com/christopher/herron/tradingsimulator/service/TradeService.class
 com/christopher/herron/tradingsimulator/service/UserService.class
 com/christopher/herron/tradingsimulator/service/SimulationService.class
+com/christopher/herron/tradingsimulator/service/MatchingEngineService.class
 com/christopher/herron/tradingsimulator/domain/tradeplatform/MatchingEngine.class
 com/christopher/herron/tradingsimulator/controller/SimulationController.class
 com/christopher/herron/tradingsimulator/TradingSimulatorApplication.class

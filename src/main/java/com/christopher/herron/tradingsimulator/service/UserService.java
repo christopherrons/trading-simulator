@@ -32,10 +32,10 @@ public class UserService {
         userCache.updateUserOrderStatus(userId, orderId, currentOrderStatus, newOrderStatus);
     }
 
-    public void addUserOrder(Order order) {
+    public void addOrderToUser(Order order) {
         readWriteLock.writeLock().lock();
         try {
-            userCache.addUserOrder(order);
+            userCache.addOrderToUser(order);
         } finally {
             readWriteLock.writeLock().unlock();
         }

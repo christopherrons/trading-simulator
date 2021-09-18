@@ -20,7 +20,7 @@ public class OrderBook {
         this.userService = userService;
     }
 
-    public void addOrder(final Order order) {
+    public void addOrderToOrderBook(final Order order) {
         totalNumberOfOrders++;
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
@@ -82,19 +82,18 @@ public class OrderBook {
     }
 
     private void removeBestBuyOrder() {
-        PriorityQueue<Order> priorityQueueBestBuyOrder = buyPriceToOrders.values().iterator().next();
-        Order order = priorityQueueBestBuyOrder.poll();
-        if (priorityQueueBestBuyOrder.isEmpty()) {
-            buyPriceToOrders.remove(order.getPrice());
-        }
-        userService.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
+        removeBestOrder(buyPriceToOrders);
     }
 
     private void removeBestSellOrder() {
-        PriorityQueue<Order> priorityQueueBestSellOrder = sellPriceToOrders.values().iterator().next();
-        Order order = priorityQueueBestSellOrder.poll();
-        if (priorityQueueBestSellOrder.isEmpty()) {
-            sellPriceToOrders.remove(order.getPrice());
+        removeBestOrder(sellPriceToOrders);
+    }
+
+    private void removeBestOrder(Map<Long, PriorityQueue<Order>> priceToOrders) {
+        PriorityQueue<Order> bestOrderPriorityQueue = priceToOrders.values().iterator().next();
+        Order order = bestOrderPriorityQueue.poll();
+        if (bestOrderPriorityQueue.isEmpty()) {
+            priceToOrders.remove(order.getPrice());
         }
         userService.updateUserOrderStatus(order.getUserId(), order.getOrderId(), OrderStatusEnum.fromValue(order.getOrderStatus()), OrderStatusEnum.FILLED);
     }

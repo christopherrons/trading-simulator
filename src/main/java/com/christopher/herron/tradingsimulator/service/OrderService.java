@@ -3,7 +3,6 @@ package com.christopher.herron.tradingsimulator.service;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Component
 public class OrderService {
@@ -29,6 +28,9 @@ public class OrderService {
 
     public void addOrder(Order order) {
         orderBookService.addOrderToOrderBook(order);
+        if (order.getUserId().equals(USER)) {
+            userService.updateUserOrderTableView(order); //TODO: Fix this
+        }
         matchingEngineService.runMatchingEngine();
     }
 }

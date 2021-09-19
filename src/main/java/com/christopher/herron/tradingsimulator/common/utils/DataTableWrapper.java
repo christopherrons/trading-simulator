@@ -14,7 +14,6 @@ public class DataTableWrapper<T> {
         addData(dataList);
     }
 
-
     public List<T> getDataList() {
         return dataList;
     }

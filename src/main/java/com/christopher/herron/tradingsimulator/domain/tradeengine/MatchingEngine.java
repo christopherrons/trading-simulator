@@ -44,7 +44,7 @@ public class MatchingEngine {
     private void runSettlementProcess(final Order buyOrder, final Order sellOrder) {
         Trade trade = createTrade(buyOrder, sellOrder);
         tradeService.addTrade(trade);
-        orderBookService.updateOrderBookAfterTrade(buyOrder, sellOrder, trade.getQuantity());
+        orderBookService.updateOrderBookViewAfterTrade(buyOrder, sellOrder, trade.getQuantity());
     }
 
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {

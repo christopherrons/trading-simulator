@@ -21,16 +21,14 @@ public class OrderService {
         this.userService = userService;
     }
 
-    public void addOrderEntryTEMPCHRILLE(@ModelAttribute Order order) {
+    public void addOrderEntryTEMPCHRILLE(Order order) {
         order.setUserId(USER);
         order.setOrderId(orderBookService.generateOrderId());
         addOrder(order);
     }
 
-    public void addOrder(@ModelAttribute Order order) {
-        userService.addOrderToUser(order);
+    public void addOrder(Order order) {
         orderBookService.addOrderToOrderBook(order);
-
         matchingEngineService.runMatchingEngine();
     }
 }

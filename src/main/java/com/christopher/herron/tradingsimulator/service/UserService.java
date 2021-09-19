@@ -3,42 +3,35 @@ package com.christopher.herron.tradingsimulator.service;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.cache.UserCache;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
-import com.christopher.herron.tradingsimulator.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component
 public class UserService {
 
     private final UserCache userCache;
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final OrderBookService orderBookService;
 
     @Autowired
-    public UserService(UserCache userCache) {
+    public UserService(UserCache userCache, OrderBookService orderBookService) {
         this.userCache = userCache;
+        this.orderBookService = orderBookService;
     }
 
     public List<Order> getUserOpenOrders(final String userId) {
-        User user = userCache.getUser(userId);
-        return user == null ? Collections.emptyList() : user.getOpenOrders();
+        return getUserOrders(userId, OrderStatusEnum.OPEN);
     }
 
-    public void updateUserOrderStatus(final String userId, final long orderId, final OrderStatusEnum currentOrderStatus, final OrderStatusEnum newOrderStatus) {
-        userCache.updateUserOrderStatus(userId, orderId, currentOrderStatus, newOrderStatus);
+    public List<Order> getUserFilledOrders(final String userId) {
+        return getUserOrders(userId, OrderStatusEnum.FILLED);
     }
 
-    public void addOrderToUser(Order order) {
-        readWriteLock.writeLock().lock();
-        try {
-            userCache.addOrderToUser(order);
-        } finally {
-            readWriteLock.writeLock().unlock();
-        }
+    private List<Order> getUserOrders(final String userId, final OrderStatusEnum orderStatus) {
+        List<Order> orders = orderBookService.getUserOrders(userId, orderStatus);
+        return orders == null ? Collections.emptyList() : orders;
     }
 
     public int generateUserId() {

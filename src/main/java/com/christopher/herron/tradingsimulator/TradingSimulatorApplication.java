@@ -7,10 +7,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 //FIx how settlement price is set
 //TODO: Create an update controller which updates the view
 //TODO: Fix Struct of html and CSS
-//TODO: Fix names and OOP design
-//TODO: Fix background
 //TODO: Look at MVC pattern
-//TODO: How to handle trading with yourself
 //TODO: Switch from user to user
 
 //Nice to have

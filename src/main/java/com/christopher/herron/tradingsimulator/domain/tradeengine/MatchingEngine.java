@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain.tradeplatform;
+package com.christopher.herron.tradingsimulator.domain.tradeengine;
 
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;

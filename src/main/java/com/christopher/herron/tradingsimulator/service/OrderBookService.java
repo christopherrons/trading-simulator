@@ -1,7 +1,8 @@
 package com.christopher.herron.tradingsimulator.service;
 
+import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
-import com.christopher.herron.tradingsimulator.domain.tradeplatform.OrderBook;
+import com.christopher.herron.tradingsimulator.domain.tradeengine.OrderBook;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -40,6 +41,10 @@ public class OrderBookService {
 
     public List<Order> getSellOrders() {
         return orderBook.getSellOrders();
+    }
+
+    public List<Order> getUserOrders(final String userId, final OrderStatusEnum orderStatus) {
+        return orderBook.getUserOrders(userId, orderStatus);
     }
 
     public long generateOrderId() {

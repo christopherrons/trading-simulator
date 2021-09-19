@@ -1,7 +1,7 @@
 package com.christopher.herron.tradingsimulator.service;
 
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
-import com.christopher.herron.tradingsimulator.domain.tradeplatform.TradePlatform;
+import com.christopher.herron.tradingsimulator.domain.tradeengine.TradePlatform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

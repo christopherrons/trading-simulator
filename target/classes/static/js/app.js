@@ -5,9 +5,6 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
-            showGreeting(JSON.parse(greeting.body).dataList);
-        });
         stompClient.subscribe('/topic/openOrders', function (openOrders) {
             showOpenOrders(JSON.parse(openOrders.body).dataList);
         });
@@ -64,22 +61,10 @@ function showOpenOrders(openOrders) {
     tableBodyId.empty();
     for (let i = 0; i < openOrders.length; i++) {
         tableBodyId.append("<tr></tr>");
-        tableBodyId.append("<td>" + openOrders[i]["orderType"] + "</td>");
+        let orderType = openOrders[i]["orderType"] == 1 ? "BID" : "ASK";
+        tableBodyId.append("<td>" + orderType + "</td>");
         tableBodyId.append("<td>" + openOrders[i]["price"] + "</td>");
         tableBodyId.append("<td>" + openOrders[i]["currentQuantity"] + "</td>");
-    }
-}
-
-function showGreeting(messages) {
-    let tableBodyId = $("#greetingsTwo");
-    for (let i = 0; i < messages.length; i++) {
-        let message = messages[i];
-        tableBodyId.append("<tr></tr>");
-        for (let key in message) {
-            if (message.hasOwnProperty(key)) {
-                tableBodyId.append("<td>" + message[key] + "</td>");
-            }
-        }
     }
 }
 

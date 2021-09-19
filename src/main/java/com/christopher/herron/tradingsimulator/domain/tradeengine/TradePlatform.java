@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain.tradeplatform;
+package com.christopher.herron.tradingsimulator.domain.tradeengine;
 
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,6 @@ import java.util.List;
 
 @Component
 public class TradePlatform {
-
 
     private final List<Trade> trades = new ArrayList<>();
 

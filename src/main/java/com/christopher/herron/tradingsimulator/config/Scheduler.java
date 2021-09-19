@@ -1,13 +1,26 @@
 package com.christopher.herron.tradingsimulator.config;
 
+import com.christopher.herron.tradingsimulator.common.utils.DataTableWrapper;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.domain.model.Trade;
+import com.christopher.herron.tradingsimulator.service.OrderBookService;
+import com.christopher.herron.tradingsimulator.service.TradeService;
+import com.christopher.herron.tradingsimulator.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @EnableScheduling
 @Configuration
 public class Scheduler {
 
-  /*  private final SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
     private final UserService userService;
 
     private final TradeService tradeService;
@@ -17,7 +30,7 @@ public class Scheduler {
     private final int MAX_ORDERBOOK_ORDERS_IN_TABLE = 5;
     private final String USER = "CHR"; //TODO: Handles this
 
-   @Autowired
+    @Autowired
     public Scheduler(SimpMessagingTemplate messagingTemplate, UserService userService, TradeService tradeService, OrderBookService orderBookService) {
         this.messagingTemplate = messagingTemplate;
         this.userService = userService;
@@ -28,8 +41,8 @@ public class Scheduler {
     @Scheduled(fixedRate = 20000)
     public void updateOpenOrderView() {
         List<Order> openOrders = userService.getUserOpenOrders(USER);
-        Collections.reverse(openOrders);
         openOrders = openOrders.size() > MAX_USER_ORDERS_IN_TABLE ? openOrders.subList(openOrders.size() - MAX_USER_ORDERS_IN_TABLE, openOrders.size()) : openOrders;
+        Collections.reverse(openOrders);
 
         messagingTemplate.convertAndSend("/topic/openOrders", new DataTableWrapper<>(openOrders));
     }
@@ -54,8 +67,8 @@ public class Scheduler {
     @Scheduled(fixedRate = 15000)
     public void updateTradeView() {
         List<Trade> trades = tradeService.getTrades();
-        List<Trade> latestTrades = trades.size() > MAX_TRADES_IN_TABLE ? trades.subList(trades.size() - MAX_TRADES_IN_TABLE , trades.size()) : trades;
+        List<Trade> latestTrades = trades.size() > MAX_TRADES_IN_TABLE ? trades.subList(trades.size() - MAX_TRADES_IN_TABLE, trades.size()) : trades;
 
         messagingTemplate.convertAndSend("/topic/trades", new DataTableWrapper<>(latestTrades));
-    }*/
+    }
 }

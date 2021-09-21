@@ -1,7 +1,7 @@
 let stompClient = null;
 
 function connect() {
-    const socket = new SockJS('/gs-guide-websocket');
+    const socket = new SockJS('/trading-simulator');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
@@ -13,6 +13,9 @@ function connect() {
         });
         stompClient.subscribe('/topic/trades', function (trades) {
             showTrades(JSON.parse(trades.body).dataList);
+        });
+        stompClient.subscribe('/topic/tradeMetrics', function (metrics) {
+            showMetrics(JSON.parse(metrics.body).dataList);
         });
     });
 }
@@ -30,6 +33,18 @@ function sendOrderForm() {
         'initialQuantity': $("#quantity").val(),
         'orderType': $("input[type='radio'][name='order-type']:checked").val()
     }));
+}
+
+function showMetrics(trades) {
+    let tableBodyId = $("#metrics");
+    tableBodyId.empty();
+    for (let i = 0; i < trades.length; i++) {
+        tableBodyId.append("<tr></tr>");
+        tableBodyId.append("<td>" + trades[i]["tradesGenerated"] + "</td>");
+        tableBodyId.append("<td>" + trades[i]["tradesPerSecond"] + "</td>");
+        tableBodyId.append("<td>" + trades[i]["ordersGenerated"] + "</td>");
+        tableBodyId.append("<td>" + trades[i]["ordersPerSecond"] + "</td>");
+    }
 }
 
 function showTrades(trades) {

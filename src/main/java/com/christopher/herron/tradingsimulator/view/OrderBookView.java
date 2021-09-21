@@ -2,7 +2,7 @@ package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
-import com.christopher.herron.tradingsimulator.common.utils.DataTableWrapper;
+import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,8 +22,8 @@ public class OrderBookView {
     public final Map<Long, Order> orderIdToBuyOrders = new ConcurrentHashMap<>();
     public final Map<Long, Order> orderIdToSellOrders = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate messagingTemplate;
-    private final int MAX_ORDERBOOK_ORDERS_IN_TABLE = 5;
-    private final int UPDATE_INTERVALL_IN_MILLISECONDS = 1000;
+    private final int maxOrderbookOrdersInTable = 5;
+    private final int updateIntervallInMilliseconds = 1000;
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired
@@ -67,16 +67,16 @@ public class OrderBookView {
                 .collect(Collectors.toList());
         switch (orderType) {
             case BUY:
-                return orders.size() > MAX_ORDERBOOK_ORDERS_IN_TABLE ? orders.subList(orders.size() - MAX_ORDERBOOK_ORDERS_IN_TABLE, orders.size()) : orders;
+                return orders.size() > maxOrderbookOrdersInTable ? orders.subList(orders.size() - maxOrderbookOrdersInTable, orders.size()) : orders;
             case SELL:
-                return orders.size() > MAX_ORDERBOOK_ORDERS_IN_TABLE ? orders.subList(0, MAX_ORDERBOOK_ORDERS_IN_TABLE) : orders;
+                return orders.size() > maxOrderbookOrdersInTable ? orders.subList(0, maxOrderbookOrdersInTable) : orders;
         }
         return Collections.emptyList();
     }
 
     private void update(String endPoint, List<Order> orderBookDataList) {
         long currenTime = Instant.now().toEpochMilli();
-        if (currenTime - lastUpdateTime.toEpochMilli() > UPDATE_INTERVALL_IN_MILLISECONDS) {
+        if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
             messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orderBookDataList));
             lastUpdateTime = Instant.now();
         }

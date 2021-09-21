@@ -2,7 +2,7 @@ package com.christopher.herron.tradingsimulator.service;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
-import com.christopher.herron.tradingsimulator.domain.tradeengine.OrderBook;
+import com.christopher.herron.tradingsimulator.domain.cache.OrderBookCache;
 import com.christopher.herron.tradingsimulator.view.OrderBookView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,22 +12,22 @@ import java.util.List;
 @Component
 public class OrderBookService {
 
-    private final OrderBook orderBook;
+    private final OrderBookCache orderBookCache;
     private final OrderBookView orderBookView;
 
     @Autowired
-    public OrderBookService(OrderBook orderBook, OrderBookView orderBookView) {
-        this.orderBook = orderBook;
+    public OrderBookService(OrderBookCache orderBookCache, OrderBookView orderBookView) {
+        this.orderBookCache = orderBookCache;
         this.orderBookView = orderBookView;
     }
 
     public void addOrderToOrderBook(final Order order) {
-        orderBook.addOrderToOrderBook(order);
+        orderBookCache.addOrderToOrderBook(order);
         updateOrderBookTableView(order);
     }
 
-    public void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {
-        orderBook.updateOrderBookAfterTrade(buyOrder, sellOrder, tradeQuantity);
+    public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {
+        orderBookCache.updateOrderBookAfterTrade(buyOrder, sellOrder, tradeQuantity);
         updateOrderBookViewAfterTrade(buyOrder, sellOrder);
     }
 
@@ -40,26 +40,30 @@ public class OrderBookService {
     }
 
     public Order getBestBuyOrder() {
-        return orderBook.getBestBuyOrder();
+        return orderBookCache.getBestBuyOrder();
     }
 
     public Order getBestSellOrder() {
-        return orderBook.getBestSellOrder();
+        return orderBookCache.getBestSellOrder();
     }
 
     public List<Order> getBuyOrders() {
-        return orderBook.getBuyOrders();
+        return orderBookCache.getBuyOrders();
     }
 
     public List<Order> getSellOrders() {
-        return orderBook.getSellOrders();
+        return orderBookCache.getSellOrders();
     }
 
     public List<Order> getUserOrders(final String userId, final OrderStatusEnum orderStatus) {
-        return orderBook.getUserOrders(userId, orderStatus);
+        return orderBookCache.getUserOrders(userId, orderStatus);
     }
 
     public long generateOrderId() {
-        return orderBook.generateOrderId();
+        return orderBookCache.generateOrderId();
+    }
+
+    public long getTotalNumberOfOrders() {
+        return orderBookCache.getTotalNumberOfOrders();
     }
 }

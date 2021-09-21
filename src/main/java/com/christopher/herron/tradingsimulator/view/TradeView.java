@@ -1,6 +1,6 @@
 package com.christopher.herron.tradingsimulator.view;
 
-import com.christopher.herron.tradingsimulator.common.utils.DataTableWrapper;
+import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -15,8 +15,8 @@ public class TradeView {
 
     public final List<Trade> trades = new ArrayList<>();
     private final SimpMessagingTemplate messagingTemplate;
-    private final int MAX_TRADES_IN_TABLE = 10;
-    private final int UPDATE_INTERVALL_IN_MILLISECONDS = 1000;
+    private final int maxTradesInTable = 10;
+    private final int updateIntervallInMilliseconds = 1000;
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired
@@ -25,8 +25,8 @@ public class TradeView {
     }
 
     public void updateTradeTableView(final Trade trade) {
-        if (trades.size() > MAX_TRADES_IN_TABLE) {
-            trades.remove(MAX_TRADES_IN_TABLE - 1);
+        if (trades.size() > maxTradesInTable) {
+            trades.remove(maxTradesInTable - 1);
         }
         trades.add(0, trade);
 
@@ -35,7 +35,7 @@ public class TradeView {
 
     private void updateView(String endPoint, List<Trade> trades) {
         long currenTime = Instant.now().toEpochMilli();
-        if (currenTime - lastUpdateTime.toEpochMilli() > UPDATE_INTERVALL_IN_MILLISECONDS) {
+        if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
             messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(trades));
             lastUpdateTime = Instant.now();
         }

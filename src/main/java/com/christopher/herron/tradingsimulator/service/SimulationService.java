@@ -25,9 +25,11 @@ public class SimulationService {
 
     public void runSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
         for (int i = 0; i < tradeSimulation.getOrdersToGenerate(); i++) {
+            long generatationStart = Instant.now().toEpochMilli();
             Order order = generateOrder();
             orderService.addOrder(order);
-            Thread.sleep(1000 / tradeSimulation.getOrdersPerSecond());
+            long generatationEnd = Instant.now().toEpochMilli();
+            Thread.sleep((1000 - (generatationEnd - generatationStart)) / tradeSimulation.getOrdersPerSecond());
         }
 
       /*  Map<Instant, Long> trades = tradePlatform.getTrades().stream()
@@ -37,7 +39,7 @@ public class SimulationService {
     private Order generateOrder() {
         return Order.valueOf(
                 orderBookService.generateOrderId(),
-                String.format("Bot: %s", userService.generateUserId()),
+                String.format("Bot: %s", userService.generateUserId()), //TODO: Create a pool of bots
                 OrderStatusEnum.OPEN.getValue(),
                 Instant.now(),
                 TradeEngineUtils.generateQuantity(),

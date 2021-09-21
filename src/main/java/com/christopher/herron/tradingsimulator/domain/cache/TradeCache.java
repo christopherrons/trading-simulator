@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain.tradeengine;
+package com.christopher.herron.tradingsimulator.domain.cache;
 
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import org.springframework.stereotype.Component;
@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TradePlatform {
+public class TradeCache {
 
     private final List<Trade> trades = new ArrayList<>();
 
-    public TradePlatform() {
+    public TradeCache() {
     }
 
     public List<Trade> getTrades() {
@@ -24,6 +24,9 @@ public class TradePlatform {
 
     public long generateTradeId() {
         return trades.size() + 1;
+    }
+    public long getTotalNumberOfTrades() {
+        return trades.size();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.common.utils;
+package com.christopher.herron.tradingsimulator.view.utils;
 
 import java.util.ArrayList;
 import java.util.List;

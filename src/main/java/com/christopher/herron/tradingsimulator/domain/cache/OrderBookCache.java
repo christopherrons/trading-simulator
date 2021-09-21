@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain.tradeengine;
+package com.christopher.herron.tradingsimulator.domain.cache;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
@@ -9,14 +9,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class OrderBook {
+public class OrderBookCache {
 
     private final Map<Long, PriorityQueue<Order>> buyPriceToOrders = new TreeMap<>(Collections.reverseOrder());
     private final Map<Long, PriorityQueue<Order>> sellPriceToOrders = new TreeMap<>();
     private final Map<String, Map<OrderStatusEnum, Map<Long, Order>>> userIdToOrderStatusToOrderIdToOrder = new ConcurrentHashMap<>();
     private long totalNumberOfOrders;
 
-    public OrderBook() {
+    public OrderBookCache() {
     }
 
     public void addOrderToOrderBook(final Order order) {
@@ -65,13 +65,17 @@ public class OrderBook {
             priceToOrders.remove(order.getPrice());
         }
         order.setOrderStatus(OrderStatusEnum.FILLED.getValue());
-        updateUserOrdersMap(order.getUserId(), order.getOrderId());
+        updateUserOrdersMapAfterTrade(order.getUserId(), order.getOrderId());
     }
 
-    private void updateUserOrdersMap(String userId, long orderId) {
+    private void updateUserOrdersMapAfterTrade(String userId, long orderId) {
+        updateUserOrdersMap(userId, orderId, OrderStatusEnum.OPEN, OrderStatusEnum.FILLED);
+    }
+
+    private void updateUserOrdersMap(String userId, long orderId, OrderStatusEnum fromOrderStatus, OrderStatusEnum toOrderStatus) {
         userIdToOrderStatusToOrderIdToOrder.get(userId)
-                .computeIfAbsent(OrderStatusEnum.FILLED, key -> new ConcurrentHashMap<>())
-                .put(orderId, userIdToOrderStatusToOrderIdToOrder.get(userId).get(OrderStatusEnum.OPEN).remove(orderId));
+                .computeIfAbsent(toOrderStatus, key -> new ConcurrentHashMap<>())
+                .put(orderId, userIdToOrderStatusToOrderIdToOrder.get(userId).get(fromOrderStatus).remove(orderId));
     }
 
     public List<Order> getBuyOrders() {
@@ -120,5 +124,9 @@ public class OrderBook {
 
     public long generateOrderId() {
         return totalNumberOfOrders + 1;
+    }
+
+    public long getTotalNumberOfOrders() {
+        return totalNumberOfOrders;
     }
 }

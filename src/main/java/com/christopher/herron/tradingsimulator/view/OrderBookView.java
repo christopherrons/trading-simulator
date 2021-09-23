@@ -4,6 +4,7 @@ import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnu
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -22,8 +23,8 @@ public class OrderBookView {
     public final Map<Long, Order> orderIdToBuyOrders = new ConcurrentHashMap<>();
     public final Map<Long, Order> orderIdToSellOrders = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate messagingTemplate;
-    private final int maxOrderbookOrdersInTable = 5;
-    private final int updateIntervallInMilliseconds = 1000;
+    private final int maxOrderbookOrdersInTable = ViewConfigs.getMaxOrderbookOrdersInTable();
+    private final int updateIntervallInMilliseconds = ViewConfigs.getOrderBookViewUpdateIntervallInMilliseconds();
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired

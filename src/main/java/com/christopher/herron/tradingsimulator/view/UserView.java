@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -16,8 +17,8 @@ public class UserView {
     public final List<Order> openOrders = new ArrayList<>();
     public final List<Order> filledOrders = new ArrayList<>();
     private final SimpMessagingTemplate messagingTemplate;
-    private final int maxUserOrdersInTable = 10;
-    private final int updateIntervallInMilliseconds = 100;
+    private final int maxUserOrdersInTable = ViewConfigs.getMaxUserOrdersInTable();
+    private final int updateIntervallInMilliseconds = ViewConfigs.getUserViewUpdateIntervallInMilliseconds();
     private Instant lastUpdateTime = Instant.now();
 
 

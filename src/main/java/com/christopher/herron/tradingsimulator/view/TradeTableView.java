@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
+import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -11,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TradeView {
+public class TradeTableView {
 
     public final List<Trade> trades = new ArrayList<>();
     private final SimpMessagingTemplate messagingTemplate;
-    private final int maxTradesInTable = 10;
-    private final int updateIntervallInMilliseconds = 1000;
+    private final int maxTradesInTable = ViewConfigs.getMaxTradesInTable();
+    private final int updateIntervallInMilliseconds = ViewConfigs.getTradeTableViewUpdateIntervallInMilliseconds();
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired
-    public TradeView(SimpMessagingTemplate messagingTemplate) {
+    public TradeTableView(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -31,6 +32,7 @@ public class TradeView {
         trades.add(0, trade);
 
         updateView("/topic/trades", trades);
+        updateGraph(trade);
     }
 
     private void updateView(String endPoint, List<Trade> trades) {
@@ -39,5 +41,9 @@ public class TradeView {
             messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(trades));
             lastUpdateTime = Instant.now();
         }
+    }
+
+    private void updateGraph(Trade trade) {
+            messagingTemplate.convertAndSend("/topic/tradesGraph", trade);
     }
 }

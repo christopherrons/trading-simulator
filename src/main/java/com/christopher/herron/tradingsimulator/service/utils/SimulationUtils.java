@@ -1,8 +1,9 @@
-package com.christopher.herron.tradingsimulator.domain.utils;
+package com.christopher.herron.tradingsimulator.service.utils;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
+import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
 
-public class TradeEngineUtils {
+public class SimulationUtils {
 
     public static long generatePrice() {
         int lowerBound = 90;

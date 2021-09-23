@@ -3,7 +3,7 @@ package com.christopher.herron.tradingsimulator.service;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.TradeSimulation;
-import com.christopher.herron.tradingsimulator.domain.utils.TradeEngineUtils;
+import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,9 +31,6 @@ public class SimulationService {
             long generatationEnd = Instant.now().toEpochMilli();
             Thread.sleep((1000 - (generatationEnd - generatationStart)) / tradeSimulation.getOrdersPerSecond());
         }
-
-      /*  Map<Instant, Long> trades = tradePlatform.getTrades().stream()
-                .collect(Collectors.toMap(Trade::getTimeStamp, Trade::getPrice));*/
     }
 
     private Order generateOrder() {
@@ -42,9 +39,9 @@ public class SimulationService {
                 String.format("Bot: %s", userService.generateUserId()), //TODO: Create a pool of bots
                 OrderStatusEnum.OPEN.getValue(),
                 Instant.now(),
-                TradeEngineUtils.generateQuantity(),
-                TradeEngineUtils.generatePrice(),
-                TradeEngineUtils.getRandomOrderType()
+                SimulationUtils.generateQuantity(),
+                SimulationUtils.generatePrice(),
+                SimulationUtils.getRandomOrderType()
         );
     }
 }

@@ -1,4 +1,4 @@
-package com.christopher.herron.tradingsimulator.domain.utils;
+package com.christopher.herron.tradingsimulator.common.utils;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;

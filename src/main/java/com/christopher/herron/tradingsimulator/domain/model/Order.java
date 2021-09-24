@@ -2,7 +2,9 @@ package com.christopher.herron.tradingsimulator.domain.model;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 
 public class Order implements Comparable<Order> {
 
@@ -14,6 +16,7 @@ public class Order implements Comparable<Order> {
     private Instant timeStamp = Instant.now();
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
+    private final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
 
     public Order() {
     }
@@ -102,6 +105,10 @@ public class Order implements Comparable<Order> {
 
     public void setOrderStatus(short orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public String getTimeStampHourMiniteSecond() {
+        return formatterHourMinuteSecond.format(Date.from(this.timeStamp));
     }
 
     @Override

@@ -56,9 +56,13 @@ public class OrderBookView {
     }
 
     private void createOrderBookDataList() {
-        List<Order> orderBookDataList = new ArrayList<>();
-        orderBookDataList.addAll(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY));
-        orderBookDataList.addAll(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL));
+        List<DataTableWrapper<Order>> orderBookDataList = new ArrayList<>();
+        //orderBookDataList.addAll(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY));
+        //orderBookDataList.addAll(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL));
+        DataTableWrapper<Order> a = new DataTableWrapper<>(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY));
+        DataTableWrapper<Order> b  = new DataTableWrapper<>(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL));
+        orderBookDataList.add(a);
+        orderBookDataList.add(b);
         update("/topic/orderBook", orderBookDataList);
     }
 
@@ -75,7 +79,7 @@ public class OrderBookView {
         return Collections.emptyList();
     }
 
-    private void update(String endPoint, List<Order> orderBookDataList) {
+    private void update(String endPoint, List<DataTableWrapper<Order>> orderBookDataList) {
         long currenTime = Instant.now().toEpochMilli();
         if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
             messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orderBookDataList));

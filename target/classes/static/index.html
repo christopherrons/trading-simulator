@@ -13,7 +13,21 @@
     Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled.
     Please enable Javascript and reload this page!</h2></noscript>
 <div class="container" id="main-content">
+    <div id="header">
+        <header>
+            <h1>Trading Simulator</h1>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="">About</a></li>
+            </ul>
+        </nav>
+    </div>
+
     <div class="grid-elements">
+
         <div class="col-md-12" id="create-order-form">
             <h2>Create Limit Order</h2>
             <form class="form-inline">
@@ -22,32 +36,45 @@
                     <input class="form-control" id="price" min="1" placeholder="Enter Price..." type="number">
                     <label for="quantity">Quantity</label>
                     <input class="form-control" id="quantity" min="1" placeholder="Enter Quantity..." type="number">
-                    <li id="order-type-radio">
-                        <ul>
-                            <li><label><input name="order-type" type="radio" value="1" checked="checked">Buy</label>
-                            </li>
-                            <li><label><input name="order-type" type="radio" value="2">Sell</label>
-                            </li>
-                        </ul>
-                    </li>
+                    <label><input name="order-type" type="radio" value="1" checked="checked">Buy</label>
+                    <label><input name="order-type" type="radio" value="2">Sell</label>
                 </div>
                 <button class="btn btn-default" id="submit-order-form" type="submit">Create Order</button>
             </form>
         </div>
-        <div class="col-md-12" id="create-simulation-form">
-            <h2>Run Trading Simulation</h2>
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="generate-orders">Generate Orders</label>
-                    <input class="form-control" id="generate-orders" min="1"
-                           placeholder="Number of orders to generate..." type="number">
-                    <label for="orders-per-second">Orders per Second</label>
-                    <input class="form-control" id="orders-per-second" min="1" max="500"
-                           placeholder="Trades per second..." type="number">
-                </div>
-                <button class="btn btn-default" id="submit-simulation-form" type="submit">Run Simulation</button>
-            </form>
+
+        <div class="simulation-container">
+            <div class="col-md-12" id="create-simulation-form">
+                <h2>Run Trading Simulation</h2>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="generate-orders">Generate Orders</label>
+                        <input class="form-control" id="generate-orders" min="1"
+                               placeholder="Number of orders to generate..." type="number">
+                        <label for="orders-per-second">Orders per Second</label>
+                        <input class="form-control" id="orders-per-second" min="1" max="500"
+                               placeholder="Number of generated orders per second..." type="number">
+                    </div>
+                    <button class="btn btn-default" id="submit-simulation-form" type="submit">Run Simulation</button>
+                </form>
+            </div>
+
+            <div class="metric-container">
+                <h2>Trade Engine Metrics</h2>
+                <p>Orders Generated: </p>
+                <p id="display-orders-generated"> </p>
+
+                <p><br><br>Orders per Second: </p>
+                <p id="display-orders-per-second"></p>
+
+                <p><br><br>Trades Matched: </p>
+                <p id="display-trades-matched"></p>
+
+                <p><br><br>Trades per Second: </p>
+                <p id="display-trades-per-second"></p>
+            </div>
         </div>
+
         <div class="col-md-12" id="user-data-container">
             <h2>User Data</h2>
             <table class="table-data" id="user-data-table">
@@ -56,12 +83,14 @@
                     <th>Order Type</th>
                     <th>Price</th>
                     <th>Quantity</th>
+                    <th>Create Date</th>
                 </tr>
                 </thead>
                 <tbody id="user-data">
                 </tbody>
             </table>
         </div>
+
         <div class="col-md-12" id="order-book-container">
             <h2>Order Book</h2>
             <table class="table-data" id="order-book-table">
@@ -77,10 +106,12 @@
                 </tbody>
             </table>
         </div>
+
         <div class="col-md-12" id="trade-graph-container">
-            <canvas id="trade-graph" width="50" height="50"></canvas>
+            <canvas id="trade-graph"></canvas>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         </div>
+
         <div class="col-md-12" id="trade-container">
             <h2>Executed Trades</h2>
             <table class="table-data" id="trade-table">
@@ -95,23 +126,13 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-md-12" id="metric-container">
-            <h2>Trade Engine Metrics</h2>
-            <table class="table-data" id="metric-table">
-                <thead>
-                <tr>
-                    <th>Trades Generated</th>
-                    <th>Trades Per Second</th>
-                    <th>Orders Generated</th>
-                    <th>Orders Per Second</th>
-                </tr>
-                </thead>
-                <tbody id="metrics">
-                </tbody>
-            </table>
-        </div>
+
         <script src="/js/main.js"></script>
     </div>
+
+    <!--footer>
+        <h2>Trade Simulator (C) 2021 Christopher Herron</h2>
+    </footer-->
 </div>
 </body>
 </html>

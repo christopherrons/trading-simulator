@@ -1,6 +1,5 @@
 package com.christopher.herron.tradingsimulator.view;
 
-import com.christopher.herron.tradingsimulator.domain.model.Metric;
 import com.christopher.herron.tradingsimulator.service.OrderBookService;
 import com.christopher.herron.tradingsimulator.service.TradeService;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
@@ -50,10 +49,7 @@ public class TradeEngineMetricsView {
                 currentNumberOfOrders
         );
 
-        List<Metric> metrics = new ArrayList<>();
-        metrics.add(metric);
-
-        messagingTemplate.convertAndSend("/topic/tradeMetrics", new DataTableWrapper<>(metrics));
+        messagingTemplate.convertAndSend("/topic/tradeMetrics", metric);
 
         previousNumberOfTrades = currentNumberOfTrades;
         previousNumberOfOrders = currentNumberOfOrders;
@@ -65,5 +61,37 @@ public class TradeEngineMetricsView {
     private double valuePerSecond(double currentNumberOfTrades, double previousNumberOfTrades, Instant lastUpdate) {
         return (currentNumberOfTrades - previousNumberOfTrades) / (Instant.now().toEpochMilli() - lastUpdate.toEpochMilli()) * millisecondsToSeconds;
     }
+
+    private static class Metric {
+
+        private final double tradesPerSecond;
+        private final double ordersPerSecond;
+        private final long tradesMatched;
+        private final long ordersGenerated;
+
+        public Metric(double tradesPerSecond, double ordersPerSecond, long tradesMatched, long ordersGenerated) {
+            this.tradesPerSecond = tradesPerSecond;
+            this.ordersPerSecond = ordersPerSecond;
+            this.tradesMatched = tradesMatched;
+            this.ordersGenerated = ordersGenerated;
+        }
+
+        public double getTradesPerSecond() {
+            return tradesPerSecond; //TODO: Fix rounding
+        }
+
+        public double getOrdersPerSecond() {
+            return ordersPerSecond;
+        }
+
+        public long getTradesMatched() {
+            return tradesMatched;
+        }
+
+        public long getOrdersGenerated() {
+            return ordersGenerated;
+        }
+    }
+
 }
 

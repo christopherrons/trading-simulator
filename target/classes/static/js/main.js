@@ -6,46 +6,38 @@ var myChart = new Chart(ctx, {
         datasets: [
             {
                 type: 'line',
+                fill: true,
                 label: 'Price',
                 data: [],
                 borderColor: "rgba(51, 255, 153, 0.5)",
-                backgroundColor: "rgba(51, 255, 153, 1)",
+                backgroundColor: "rgba(51, 255, 153, 0.2)",
             },
             {
                 type: 'line',
                 label: 'Vwap',
-                data: [],
-                borderColor: "rgba(232, 97, 97, 1)",
-                backgroundColor: "rgba(232, 97, 97, 0.5)",
-            },
-            {
-                type: 'bar',
-                label: 'Volume',
-                data: [],
-                borderColor: "rgba(232, 97, 97, 1)",
-                backgroundColor: "rgba(232, 97, 97, 0.5)",
                 options: {
                     scales: {
-                        yAxes: [{
-                            ticks: {
-                                min: 5,
-                                max: 10,
-                            }
-                        }]
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Price Over Time'
                     }
-                }
+                },
+                data: [],
+                borderColor: "rgba(232, 97, 97, 1)",
+                backgroundColor: "rgba(232, 97, 97, 0.5)",
             },
         ]
     },
     options: {
-        scales: {
-            y: {
-                beginAtZero: true
+        plugins: {
+            title: {
+                display: true,
+                text: 'Price Over Time',
             }
-        },
-        title: {
-            display: true,
-            text: 'Price Over Time'
         }
     }
 });
@@ -82,7 +74,7 @@ function connect() {
             updateGraph(JSON.parse(tradeDataPoint.body));
         });
         stompClient.subscribe('/topic/tradeMetrics', function (metrics) {
-            showMetrics(JSON.parse(metrics.body).dataList);
+            showMetrics(JSON.parse(metrics.body));
         });
     });
 }
@@ -91,24 +83,45 @@ function showOpenOrders(openOrders) {
     let tableBodyId = $("#user-data");
     tableBodyId.empty();
     for (let i = 0; i < openOrders.length; i++) {
-        tableBodyId.append("<tr></tr>");
         let orderType = openOrders[i]["orderType"] == 1 ? "BID" : "ASK";
-        tableBodyId.append("<td>" + orderType + "</td>");
-        tableBodyId.append("<td>" + openOrders[i]["price"] + "</td>");
-        tableBodyId.append("<td>" + openOrders[i]["currentQuantity"] + "</td>");
+        tableBodyId.append("<tr>" +
+            "</tr><td>" + orderType + "</td> " +
+            "<td>" + openOrders[i]["price"] + "</td>" +
+            "<td>" + openOrders[i]["currentQuantity"] + "</td>" +
+            "<td>" + openOrders[i]["timeStamp"] + "</td>" +
+            "</tr>");
     }
 }
 
 function showOrderBook(orderBook) {
     let tableBodyId = $("#order-book");
     tableBodyId.empty();
-    for (let i = 0; i < orderBook.length; i++) {
-        tableBodyId.append("<tr></tr>");
-        let orderType = orderBook[i]["orderType"] == 1 ? "BID" : "ASK";
-        tableBodyId.append("<td>" + orderType + "</td>");
-        tableBodyId.append("<td>" + orderBook[i]["price"] + "</td>");
-        tableBodyId.append("<td>" + orderBook[i]["currentQuantity"] + "</td>");
-        tableBodyId.append("<td>" + orderBook[i]["timeStamp"] + "</td>");
+    addBuyOrders(tableBodyId, orderBook[0].dataList);
+    addSellOrders(tableBodyId, orderBook[1].dataList);
+}
+
+function addBuyOrders(tableBodyId, buyOrders) {
+    for (let i = 0; i < buyOrders.length; i++) {
+        tableBodyId.append("<tr id=tempBuy" + i + ">" +
+            "<td>" + "BID" + "</td>" +
+            "<td>" + buyOrders[i]["price"] + "</td>" +
+            "<td>" + buyOrders[i]["currentQuantity"] + "</td>" +
+            "<td>" + buyOrders[i]["timeStampHourMiniteSecond"] + "</td>" +
+            "</tr>");
+        $("#tempBuy" + i).css("background-color", "rgba(229, 252, 212, 0.5)")
+    }
+    $("#tempBuy" + (buyOrders.length - 1)).css("border-bottom", "1px solid #dddddd");
+}
+
+function addSellOrders(tableBodyId, sellOrders) {
+    for (let i = 0; i < sellOrders.length; i++) {
+        tableBodyId.append("<tr id=tempSell" + i + ">" +
+            "<td>" + "ASK" + "</td>" +
+            "<td>" + sellOrders[i]["price"] + "</td>" +
+            "<td>" + sellOrders[i]["currentQuantity"] + "</td>" +
+            "<td>" + sellOrders[i]["timeStampHourMiniteSecond"] + "</td>" +
+            "</tr>");
+        $("#tempSell" + i).css("background-color", "rgba(253, 216, 215, 0.5)")
     }
 }
 
@@ -116,17 +129,17 @@ function showTrades(trades) {
     let tableBodyId = $("#trades");
     tableBodyId.empty();
     for (let i = 0; i < trades.length; i++) {
-        tableBodyId.append("<tr></tr>");
-        tableBodyId.append("<td>" + trades[i]["price"] + "</td>");
-        tableBodyId.append("<td>" + trades[i]["quantity"] + "</td>");
-        tableBodyId.append("<td>" + trades[i]["timeStamp"] + "</td>");
+        tableBodyId.append("<tr>" +
+            "</tr><td>" + trades[i]["price"] + "</td>" +
+            "<td>" + trades[i]["quantity"] + "</td>" +
+            "<td>" + trades[i]["timeStampHourMiniteSecond"] + "</td>" +
+            "</tr>");
     }
 }
 
 function updateGraph(tradeDataPoint) {
     myChart.data.datasets[0].data[myChart.data.datasets[0].data.length] = tradeDataPoint["price"];
     myChart.data.datasets[1].data[myChart.data.datasets[1].data.length] = tradeDataPoint["vwap"];
-    myChart.data.datasets[2].data[myChart.data.datasets[2].data.length] = tradeDataPoint["quantity"];
     myChart.data.labels[myChart.data.labels.length] = tradeDataPoint["timeStamp"];
     myChart.update();
 }
@@ -146,15 +159,10 @@ function sendOrderForm() {
     }));
 }
 
-function showMetrics(trades) {
-    let tableBodyId = $("#metrics");
-    tableBodyId.empty();
-    for (let i = 0; i < trades.length; i++) {
-        tableBodyId.append("<tr></tr>");
-        tableBodyId.append("<td>" + trades[i]["tradesGenerated"] + "</td>");
-        tableBodyId.append("<td>" + trades[i]["tradesPerSecond"] + "</td>");
-        tableBodyId.append("<td>" + trades[i]["ordersGenerated"] + "</td>");
-        tableBodyId.append("<td>" + trades[i]["ordersPerSecond"] + "</td>");
-    }
+function showMetrics(metrics) {
+    $("#display-orders-generated").empty().append(metrics["ordersGenerated"]) ;
+    $("#display-orders-per-second").empty().append(metrics["ordersPerSecond"]);
+    $("#display-trades-matched").empty().append(metrics["tradesMatched"]);
+    $("#display-trades-per-second").empty().append(metrics["tradesPerSecond"]);
 }
 

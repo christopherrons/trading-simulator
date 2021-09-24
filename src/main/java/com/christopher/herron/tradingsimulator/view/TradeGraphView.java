@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @Component
 public class TradeGraphView {
@@ -69,6 +70,7 @@ public class TradeGraphView {
         private final double vwap;
         private final double quantity;
         private final Instant timeStamp;
+        private final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
 
         public TradeDataPoint(double price, double vwap, double quantity, Instant timeStamp) {
             this.price = price;
@@ -89,8 +91,8 @@ public class TradeGraphView {
             return this.quantity;
         }
 
-        public Instant getTimeStamp() {
-            return timeStamp.truncatedTo(ChronoUnit.SECONDS);
+        public String getTimeStamp() {
+            return formatterHourMinuteSecond.format(Date.from(this.timeStamp));
         }
     }
 }

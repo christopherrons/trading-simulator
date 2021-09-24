@@ -1,0 +1,157 @@
+@font-face {
+    font-family: 'Acme';
+    src: url('https://fonts.googleapis.com/css2?family=Acme&display=swap');
+}
+
+/* --- Body --- */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #666666;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+
+/* --- header, headers and footer --- */
+header {
+    top: 0;
+    width: 100%;
+}
+
+header, footer {
+    background-color: rgba(21, 30, 61, 0.95);
+    color: #f1f1f1;
+}
+
+h1, h2, h3 {
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+h2 {
+    margin-bottom: 1em;
+
+}
+
+header h1 {
+    font-size: x-large;
+    padding-left: 0.75rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+}
+
+footer h2 {
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-top: 0.75rem;
+}
+
+/* --- nav --- */
+nav {
+    position: sticky;
+    top: 4.5rem;
+    width: 100%;
+}
+
+nav ul {
+    background-color: rgba(0, 0, 111, 0.9);
+}
+
+nav li {
+    display: inline-block;
+}
+
+nav li a {
+    display: block;
+    color: white;
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    font-size: larger;
+}
+
+nav li a:hover {
+    color: #666666;
+    outline: none;
+    transition: 0.5s;
+}
+
+/* --- grid-elements --- */
+.grid-elements {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1em;
+}
+
+.grid-elements > div {
+    background-color: rgba(238, 238, 238, 0.8);
+    padding: 1em;
+}
+
+.simulation-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1em;
+}
+
+.simulation-container > div {
+    background-color: rgba(238, 238, 238, 0.8);
+    padding: 1em;
+}
+
+.metric-container p {
+    display: inline;
+}
+
+
+
+/* --- table-data --- */
+.table-data {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-data thead tr {
+    background-color: #04AA6D;
+    color: white;
+    font-weight: bold;
+    text-align: left;
+}
+
+.table-data th, .table-data td {
+    padding: 12px 15px;
+}
+
+#trade-table tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+/* --- input--- */
+input[type=number], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* --- button--- */
+button[type=submit] {
+    width: 35%;
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+
+button[type=submit]:hover {
+    background-color: #45a049;
+}
+
+

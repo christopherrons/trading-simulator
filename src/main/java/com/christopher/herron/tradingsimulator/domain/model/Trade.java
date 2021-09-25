@@ -12,7 +12,6 @@ public class Trade {
     private final long buyOrderId;
     private final long sellOrderId;
     private final long tradeId;
-    private final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
 
     public Trade(long price, long quantity, long buyOrderId, long sellOrderId, long tradeId) {
         this.price = price;
@@ -43,6 +42,7 @@ public class Trade {
     }
 
     public String getTimeStampHourMiniteSecond() {
+        final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
         return formatterHourMinuteSecond.format(Date.from(this.timeStamp));
     }
 

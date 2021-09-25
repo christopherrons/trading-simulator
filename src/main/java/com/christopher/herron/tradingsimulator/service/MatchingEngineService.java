@@ -1,9 +1,9 @@
 package com.christopher.herron.tradingsimulator.service;
 
 import com.christopher.herron.tradingsimulator.domain.tradeengine.MatchingEngine;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class MatchingEngineService {
 
     private final MatchingEngine matchingEngine;

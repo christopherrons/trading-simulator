@@ -1,9 +1,11 @@
 package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
+import com.christopher.herron.tradingsimulator.view.event.UpdateTradeTableViewEvent;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TradeTableView {
+public class TradeTableView implements ApplicationListener<UpdateTradeTableViewEvent> {
 
     public final List<Trade> trades = new ArrayList<>();
     private final SimpMessagingTemplate messagingTemplate;
@@ -23,6 +25,11 @@ public class TradeTableView {
     @Autowired
     public TradeTableView(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+    }
+
+    @Override
+    public void onApplicationEvent(UpdateTradeTableViewEvent updateTradGraphViewEvent) {
+        updateTradeTableView(updateTradGraphViewEvent.getTrade());
     }
 
     public void updateTradeTableView(final Trade trade) {

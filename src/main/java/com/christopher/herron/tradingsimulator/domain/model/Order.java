@@ -16,7 +16,6 @@ public class Order implements Comparable<Order> {
     private Instant timeStamp = Instant.now();
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
-    private final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
 
     public Order() {
     }
@@ -108,6 +107,7 @@ public class Order implements Comparable<Order> {
     }
 
     public String getTimeStampHourMiniteSecond() {
+        final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
         return formatterHourMinuteSecond.format(Date.from(this.timeStamp));
     }
 

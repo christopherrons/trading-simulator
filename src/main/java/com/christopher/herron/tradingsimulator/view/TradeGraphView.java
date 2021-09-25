@@ -1,8 +1,10 @@
 package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
+import com.christopher.herron.tradingsimulator.view.event.UpdateTradGraphViewEvent;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +13,7 @@ import java.time.Instant;
 import java.util.Date;
 
 @Component
-public class TradeGraphView {
+public class TradeGraphView implements ApplicationListener<UpdateTradGraphViewEvent> {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final int updateIntervallInMilliseconds = ViewConfigs.getTradeGraphViewUpdateIntervallInMilliseconds();
@@ -24,6 +26,11 @@ public class TradeGraphView {
     @Autowired
     public TradeGraphView(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+    }
+
+    @Override
+    public void onApplicationEvent(UpdateTradGraphViewEvent updateTradGraphViewEvent) {
+        updateTradeGraphView(updateTradGraphViewEvent.getTrade());
     }
 
     public void updateTradeGraphView(final Trade trade) {
@@ -73,7 +80,6 @@ public class TradeGraphView {
         private final double vwap;
         private final double quantity;
         private final Instant timeStamp;
-        private final SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
 
         public TradeDataPoint(double price, double vwap, double quantity, Instant timeStamp) {
             this.price = price;
@@ -95,6 +101,7 @@ public class TradeGraphView {
         }
 
         public String getTimeStamp() {
+            SimpleDateFormat formatterHourMinuteSecond = new SimpleDateFormat("HH:mm:ss");
             return formatterHourMinuteSecond.format(Date.from(this.timeStamp));
         }
     }

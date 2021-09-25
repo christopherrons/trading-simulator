@@ -1,42 +1,38 @@
 package com.christopher.herron.tradingsimulator.service;
 
-import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
-import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.cache.OrderBookCache;
-import com.christopher.herron.tradingsimulator.view.OrderBookView;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-@Component
+@Service
 public class OrderBookService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final OrderBookCache orderBookCache;
-    private final OrderBookView orderBookView;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     @Autowired
-    public OrderBookService(OrderBookCache orderBookCache, OrderBookView orderBookView) {
+    public OrderBookService(ApplicationEventPublisher applicationEventPublisher, OrderBookCache orderBookCache) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.orderBookCache = orderBookCache;
-        this.orderBookView = orderBookView;
     }
 
     public void addOrderToOrderBook(final Order order) {
         orderBookCache.addOrderToOrderBook(order);
-        updateOrderBookTableView(order);
+        applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this, order));
+
     }
 
     public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {
         orderBookCache.updateOrderBookAfterTrade(buyOrder, sellOrder, tradeQuantity);
-        updateOrderBookViewAfterTrade(buyOrder, sellOrder);
-    }
+        applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this));
 
-    public void updateOrderBookTableView(final Order order) {
-        orderBookView.updateOrderBook(order);
-    }
-
-    public void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellOrder) {
-        orderBookView.updateOrderBookViewAfterTrade(buyOrder, sellOrder);
     }
 
     public Order getBestBuyOrder() {
@@ -47,18 +43,6 @@ public class OrderBookService {
         return orderBookCache.getBestSellOrder();
     }
 
-    public List<Order> getBuyOrders() {
-        return orderBookCache.getBuyOrders();
-    }
-
-    public List<Order> getSellOrders() {
-        return orderBookCache.getSellOrders();
-    }
-
-    public List<Order> getUserOrders(final String userId, final OrderStatusEnum orderStatus) {
-        return orderBookCache.getUserOrders(userId, orderStatus);
-    }
-
     public long generateOrderId() {
         return orderBookCache.generateOrderId();
     }
@@ -66,4 +50,5 @@ public class OrderBookService {
     public long getTotalNumberOfOrders() {
         return orderBookCache.getTotalNumberOfOrders();
     }
+
 }

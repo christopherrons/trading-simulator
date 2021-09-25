@@ -1,7 +1,7 @@
 package com.christopher.herron.tradingsimulator.view;
 
+import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
 import com.christopher.herron.tradingsimulator.service.OrderBookService;
-import com.christopher.herron.tradingsimulator.service.SimulationService;
 import com.christopher.herron.tradingsimulator.service.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,46 +18,43 @@ public class TradeEngineMetricsView {
     private final SimpMessagingTemplate messagingTemplate;
     private final OrderBookService orderBookService;
     private final TradeService tradeService;
-    private final SimulationService simulationService;
+    private final int millisecondsToSeconds = 1000;
     private double previousNumberOfTrades = 0;
     private double previousNumberOfOrders = 0;
     private Instant lastUpdateTime = Instant.now();
-    private final int millisecondsToSeconds = 1000;
 
     @Autowired
-    public TradeEngineMetricsView(SimpMessagingTemplate messagingTemplate, OrderBookService orderBookService, TradeService tradeService, SimulationService simulationService) {
+    public TradeEngineMetricsView(SimpMessagingTemplate messagingTemplate, OrderBookService orderBookService, TradeService tradeService) {
         this.messagingTemplate = messagingTemplate;
         this.orderBookService = orderBookService;
         this.tradeService = tradeService;
-        this.simulationService = simulationService;
     }
 
     @Scheduled(fixedRate = 2000)
     private void updateMetricsView() {
 
         long currentNumberOfOrders = orderBookService.getTotalNumberOfOrders();
-        if (currentNumberOfOrders != simulationService.getTradeSimulationOrdersToGenerate()) {
-            long currentNumberOfTrades = tradeService.getTotalNumberOfTrades();
-            double tradesPerSecond = valuePerSecond(currentNumberOfTrades, previousNumberOfTrades, lastUpdateTime);
-            double ordersPerSecond = valuePerSecond(currentNumberOfOrders, previousNumberOfOrders, lastUpdateTime);
+        long currentNumberOfTrades = tradeService.getTotalNumberOfTrades();
 
-            Metric metric = new Metric(
-                    tradesPerSecond,
-                    ordersPerSecond,
-                    currentNumberOfTrades,
-                    currentNumberOfOrders
-            );
+        double tradesPerSecond = valuePerSecond(currentNumberOfTrades, previousNumberOfTrades, lastUpdateTime);
+        double ordersPerSecond = valuePerSecond(currentNumberOfOrders, previousNumberOfOrders, lastUpdateTime);
 
-            messagingTemplate.convertAndSend("/topic/tradeMetrics", metric);
+        Metric metric = new Metric(
+                tradesPerSecond,
+                ordersPerSecond,
+                currentNumberOfTrades,
+                currentNumberOfOrders
+        );
 
-            previousNumberOfTrades = currentNumberOfTrades;
-            previousNumberOfOrders = currentNumberOfOrders;
-            lastUpdateTime = Instant.now();
-        }
+        messagingTemplate.convertAndSend("/topic/tradeMetrics", metric);
+
+        previousNumberOfTrades = currentNumberOfTrades;
+        previousNumberOfOrders = currentNumberOfOrders;
+        lastUpdateTime = Instant.now();
     }
 
     private double valuePerSecond(double currentNumberOfTrades, double previousNumberOfTrades, Instant lastUpdate) {
-        return (currentNumberOfTrades - previousNumberOfTrades) / (Instant.now().toEpochMilli() - lastUpdate.toEpochMilli()) * millisecondsToSeconds;
+        return MathUtils.roundDouble((currentNumberOfTrades - previousNumberOfTrades) / (Instant.now().toEpochMilli() - lastUpdate.toEpochMilli()) * millisecondsToSeconds, 2);
     }
 
     private static class Metric {

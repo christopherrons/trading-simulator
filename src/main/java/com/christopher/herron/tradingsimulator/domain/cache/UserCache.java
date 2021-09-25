@@ -11,11 +11,15 @@ public class UserCache {
 
     public Map<String, User> userIdToUser = new ConcurrentHashMap<>();
 
+    public void addUser(User user) {
+        userIdToUser.putIfAbsent(user.getUserId(), user);
+    }
+
     public User getUser(final String userId) {
         return userIdToUser.get(userId);
     }
 
     public int generateUserId() {
-        return userIdToUser.keySet().size() + 1;
+        return userIdToUser.size() + 1;
     }
 }

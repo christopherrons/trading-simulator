@@ -5,15 +5,19 @@ import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
 
 public class SimulationUtils {
 
+    public static int getRandomTradeBot(final int upperBound) {
+        return MathUtils.generateRandomUniformNumber(0, upperBound);
+    }
+
     public static long generatePrice() {
-        int lowerBound = 90;
-        int upperBound = 110;
+        long lowerBound = 90;
+        long upperBound = 110;
         return MathUtils.generateRandomUniformNumber(lowerBound, upperBound);
     }
 
     public static long generateQuantity() {
-        int lowerBound = 100;
-        int upperBound = 1000;
+        long lowerBound = 100;
+        long upperBound = 1000;
         return MathUtils.generateRandomUniformNumber(lowerBound, upperBound);
     }
 

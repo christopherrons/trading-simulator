@@ -2,29 +2,26 @@ package com.christopher.herron.tradingsimulator.service;
 
 import com.christopher.herron.tradingsimulator.domain.cache.TradeCache;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
-import com.christopher.herron.tradingsimulator.view.TradeGraphView;
-import com.christopher.herron.tradingsimulator.view.TradeTableView;
+import com.christopher.herron.tradingsimulator.view.event.UpdateTradGraphViewEvent;
+import com.christopher.herron.tradingsimulator.view.event.UpdateTradeTableViewEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-@Component
+@Service
 public class TradeService {
 
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final TradeCache tradeCache;
-    private final TradeTableView tradeTableView;
-    private final TradeGraphView tradeGraphView;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     @Autowired
-    public TradeService(TradeCache tradeCache, TradeTableView tradeTableView, TradeGraphView tradeGraphView) {
+    public TradeService(ApplicationEventPublisher applicationEventPublisher, TradeCache tradeCache) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.tradeCache = tradeCache;
-        this.tradeTableView = tradeTableView;
-        this.tradeGraphView = tradeGraphView;
-    }
-
-    public List<Trade> getTrades() {
-        return tradeCache.getTrades();
     }
 
     public void addTrade(final Trade trade) {
@@ -33,20 +30,18 @@ public class TradeService {
     }
 
     private void updateTradeViews(final Trade trade) {
-        updateTradeTableView(trade);
-        updateTradeGraphView(trade);
+        applicationEventPublisher.publishEvent(new UpdateTradGraphViewEvent(this, trade));
+        applicationEventPublisher.publishEvent(new UpdateTradeTableViewEvent(this, trade));
+     /*   executorService.execute(new Runnable() {
+            public void run() {
+                applicationEventPublisher.publishEvent(new UpdateTradGraphViewEvent(this, trade));
+                applicationEventPublisher.publishEvent(new UpdateTradeTableViewEvent(this, trade));
+            }
+        });*/
     }
 
     public long generateTradeId() {
         return tradeCache.generateTradeId();
-    }
-
-    public void updateTradeTableView(final Trade trade) {
-        tradeTableView.updateTradeTableView(trade);
-    }
-
-    public void updateTradeGraphView(final Trade trade) {
-        tradeGraphView.updateTradeGraphView(trade);
     }
 
     public long getTotalNumberOfTrades() {

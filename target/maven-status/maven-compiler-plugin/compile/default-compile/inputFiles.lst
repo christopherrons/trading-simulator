@@ -2,6 +2,8 @@
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/cache/TradeCache.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/common/enumerators/OrderTypeEnum.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/model/Trade.java
+/home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/view/event/UpdateTradeTableViewEvent.java
+/home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/view/event/UpdateOrderBookViewEvent.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/OrderService.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/model/Order.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/controller/SimulationController.java
@@ -15,11 +17,13 @@
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/model/User.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/common/utils/MathUtils.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/OrderBookService.java
+/home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/view/event/UpdateTradGraphViewEvent.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/cache/UserCache.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/MatchingEngineService.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/common/enumerators/OrderStatusEnum.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/view/OrderBookView.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/websocket/WebSocket.java
+/home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/view/event/UpdateUserViewEvent.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/service/SimulationService.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/view/utils/ViewConfigs.java
 /home/christopherrons/develop/trading-simulator/src/main/java/com/christopher/herron/tradingsimulator/domain/tradeengine/MatchingEngine.java

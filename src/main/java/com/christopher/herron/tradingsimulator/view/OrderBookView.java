@@ -3,25 +3,23 @@ package com.christopher.herron.tradingsimulator.view;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.*;
+
 
 @Component
-public class OrderBookView {
+public class OrderBookView implements ApplicationListener<UpdateOrderBookViewEvent> {
 
-    public final Map<Long, Order> orderIdToBuyOrders = new ConcurrentHashMap<>();
-    public final Map<Long, Order> orderIdToSellOrders = new ConcurrentHashMap<>();
+    public final TreeMap<Long, LinkedList<Order>> buyPriceToOrders = new TreeMap<>(Collections.reverseOrder());
+    public final TreeMap<Long, LinkedList<Order>> sellPriceToOrders = new TreeMap<>();
     private final SimpMessagingTemplate messagingTemplate;
     private final int maxOrderbookOrdersInTable = ViewConfigs.getMaxOrderbookOrdersInTable();
     private final int updateIntervallInMilliseconds = ViewConfigs.getOrderBookViewUpdateIntervallInMilliseconds();
@@ -32,14 +30,16 @@ public class OrderBookView {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellOrder) {
-        if (buyOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
-            orderIdToBuyOrders.remove(buyOrder.getOrderId());
+    @Override
+    public void onApplicationEvent(UpdateOrderBookViewEvent updateOrderBookViewEvent) {
+        if (updateOrderBookViewEvent.getNewOrder() == null) {
+            updateOrderBookViewAfterTrade();
+        } else {
+            updateOrderBook(updateOrderBookViewEvent.getNewOrder());
         }
+    }
 
-        if (sellOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
-            orderIdToSellOrders.remove(sellOrder.getOrderId());
-        }
+    public void updateOrderBookViewAfterTrade() {
         if (isUpdateIntervalMet()) {
             createOrderBookDataList();
         }
@@ -48,12 +48,13 @@ public class OrderBookView {
     public void updateOrderBook(final Order order) {
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
-                orderIdToBuyOrders.putIfAbsent(order.getOrderId(), order);
+                buyPriceToOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
                 break;
             case SELL:
-                orderIdToSellOrders.putIfAbsent(order.getOrderId(), order);
+                sellPriceToOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
                 break;
         }
+
         if (isUpdateIntervalMet()) {
             createOrderBookDataList();
         }
@@ -61,23 +62,36 @@ public class OrderBookView {
 
     private void createOrderBookDataList() {
         List<DataTableWrapper<Order>> orderBookDataList = new ArrayList<>();
-        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY)));
-        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL)));
+        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(buyPriceToOrders, OrderTypeEnum.BUY)));
+        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(sellPriceToOrders, OrderTypeEnum.SELL)));
         update("/topic/orderBook", orderBookDataList);
     }
 
-    private List<Order> getTopOrders(final Map<Long, Order> orderIdToOrders, final OrderTypeEnum orderType) {
-        List<Order> orders = orderIdToOrders.values().stream()
-                .sorted(Order::compareTo)
-                .collect(Collectors.toList());
-
-        switch (orderType) {
-            case BUY:
-                return orders.size() > maxOrderbookOrdersInTable ? orders.subList(orders.size() - maxOrderbookOrdersInTable, orders.size()) : orders;
-            case SELL:
-                return orders.size() > maxOrderbookOrdersInTable ? orders.subList(0, maxOrderbookOrdersInTable) : orders;
+    private List<Order> getTopOrders(final TreeMap<Long, LinkedList<Order>> orderIdToOrders, final OrderTypeEnum orderType) {
+        List<Order> orders = new ArrayList<>();
+        boolean topOrdersFound = false;
+        for (LinkedList<Order> currentOrders : orderIdToOrders.values()) {
+            if (topOrdersFound) {
+                break;
+            }
+            for (Iterator<Order> orderIterator = currentOrders.iterator(); orderIterator.hasNext(); ) {
+                Order currentOrder = orderIterator.next();
+                if (currentOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
+                    orderIterator.remove();
+                } else {
+                    orders.add(currentOrder);
+                }
+                if (orders.size() == maxOrderbookOrdersInTable) {
+                    topOrdersFound = true;
+                    break;
+                }
+            }
         }
-        return Collections.emptyList();
+
+        if (orderType == OrderTypeEnum.BUY) {
+            Collections.reverse(orders);
+        }
+        return orders;
     }
 
     private void update(String endPoint, List<DataTableWrapper<Order>> orderBookDataList) {
@@ -89,5 +103,7 @@ public class OrderBookView {
         long currenTime = Instant.now().toEpochMilli();
         return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
+
+
 }
 

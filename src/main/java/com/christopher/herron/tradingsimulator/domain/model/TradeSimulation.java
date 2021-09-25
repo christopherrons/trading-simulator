@@ -2,17 +2,17 @@ package com.christopher.herron.tradingsimulator.domain.model;
 
 public class TradeSimulation {
 
-    private int ordersToGenerate;
+    private long ordersToGenerate;
     private int ordersPerSecond;
 
     public TradeSimulation() {
     }
 
-    public int getOrdersToGenerate() {
+    public long getOrdersToGenerate() {
         return ordersToGenerate;
     }
 
-    public void setOrdersToGenerate(int ordersToGenerate) {
+    public void setOrdersToGenerate(long ordersToGenerate) {
         this.ordersToGenerate = ordersToGenerate;
     }
 

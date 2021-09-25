@@ -1,7 +1,7 @@
 package com.christopher.herron.tradingsimulator.view;
 
-import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
+import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -31,19 +31,18 @@ public class TradeTableView {
         }
         trades.add(0, trade);
 
-        updateView("/topic/trades", trades);
-        updateGraph(trade);
-    }
-
-    private void updateView(String endPoint, List<Trade> trades) {
-        long currenTime = Instant.now().toEpochMilli();
-        if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
-            messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(trades));
-            lastUpdateTime = Instant.now();
+        if (isUpdateIntervalMet()) {
+            updateView("/topic/trades", trades);
         }
     }
 
-    private void updateGraph(Trade trade) {
-            messagingTemplate.convertAndSend("/topic/tradesGraph", trade);
+    private void updateView(String endPoint, List<Trade> trades) {
+        messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(trades));
+        lastUpdateTime = Instant.now();
+    }
+
+    private boolean isUpdateIntervalMet() {
+        long currenTime = Instant.now().toEpochMilli();
+        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 }

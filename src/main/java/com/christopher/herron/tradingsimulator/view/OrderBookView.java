@@ -2,8 +2,8 @@ package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
-import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -40,7 +40,9 @@ public class OrderBookView {
         if (sellOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
             orderIdToSellOrders.remove(sellOrder.getOrderId());
         }
-        createOrderBookDataList();
+        if (isUpdateIntervalMet()) {
+            createOrderBookDataList();
+        }
     }
 
     public void updateOrderBook(final Order order) {
@@ -52,17 +54,15 @@ public class OrderBookView {
                 orderIdToSellOrders.putIfAbsent(order.getOrderId(), order);
                 break;
         }
-        createOrderBookDataList();
+        if (isUpdateIntervalMet()) {
+            createOrderBookDataList();
+        }
     }
 
     private void createOrderBookDataList() {
         List<DataTableWrapper<Order>> orderBookDataList = new ArrayList<>();
-        //orderBookDataList.addAll(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY));
-        //orderBookDataList.addAll(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL));
-        DataTableWrapper<Order> a = new DataTableWrapper<>(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY));
-        DataTableWrapper<Order> b  = new DataTableWrapper<>(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL));
-        orderBookDataList.add(a);
-        orderBookDataList.add(b);
+        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(orderIdToBuyOrders, OrderTypeEnum.BUY)));
+        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(orderIdToSellOrders, OrderTypeEnum.SELL)));
         update("/topic/orderBook", orderBookDataList);
     }
 
@@ -70,6 +70,7 @@ public class OrderBookView {
         List<Order> orders = orderIdToOrders.values().stream()
                 .sorted(Order::compareTo)
                 .collect(Collectors.toList());
+
         switch (orderType) {
             case BUY:
                 return orders.size() > maxOrderbookOrdersInTable ? orders.subList(orders.size() - maxOrderbookOrdersInTable, orders.size()) : orders;
@@ -80,11 +81,13 @@ public class OrderBookView {
     }
 
     private void update(String endPoint, List<DataTableWrapper<Order>> orderBookDataList) {
+        messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orderBookDataList));
+        lastUpdateTime = Instant.now();
+    }
+
+    private boolean isUpdateIntervalMet() {
         long currenTime = Instant.now().toEpochMilli();
-        if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
-            messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orderBookDataList));
-            lastUpdateTime = Instant.now();
-        }
+        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 }
 

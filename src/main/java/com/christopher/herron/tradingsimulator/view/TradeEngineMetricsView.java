@@ -1,8 +1,8 @@
 package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.service.OrderBookService;
+import com.christopher.herron.tradingsimulator.service.SimulationService;
 import com.christopher.herron.tradingsimulator.service.TradeService;
-import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,8 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @EnableScheduling
 @Component
@@ -20,42 +18,42 @@ public class TradeEngineMetricsView {
     private final SimpMessagingTemplate messagingTemplate;
     private final OrderBookService orderBookService;
     private final TradeService tradeService;
+    private final SimulationService simulationService;
     private double previousNumberOfTrades = 0;
     private double previousNumberOfOrders = 0;
-    private double previousTradesPerSecond = 0;
-    private double previousOrdersPerSecond = 0;
-    private Instant previousUpdateTimeStamp = Instant.now();
+    private Instant lastUpdateTime = Instant.now();
     private final int millisecondsToSeconds = 1000;
 
     @Autowired
-    public TradeEngineMetricsView(SimpMessagingTemplate messagingTemplate, OrderBookService orderBookService, TradeService tradeService) {
+    public TradeEngineMetricsView(SimpMessagingTemplate messagingTemplate, OrderBookService orderBookService, TradeService tradeService, SimulationService simulationService) {
         this.messagingTemplate = messagingTemplate;
         this.orderBookService = orderBookService;
         this.tradeService = tradeService;
+        this.simulationService = simulationService;
     }
 
     @Scheduled(fixedRate = 2000)
     private void updateMetricsView() {
-        long currentNumberOfTrades = tradeService.getTotalNumberOfTrades();
+
         long currentNumberOfOrders = orderBookService.getTotalNumberOfOrders();
+        if (currentNumberOfOrders != simulationService.getTradeSimulationOrdersToGenerate()) {
+            long currentNumberOfTrades = tradeService.getTotalNumberOfTrades();
+            double tradesPerSecond = valuePerSecond(currentNumberOfTrades, previousNumberOfTrades, lastUpdateTime);
+            double ordersPerSecond = valuePerSecond(currentNumberOfOrders, previousNumberOfOrders, lastUpdateTime);
 
-        double tradesPerSecond = valuePerSecond(currentNumberOfTrades, previousNumberOfTrades, previousUpdateTimeStamp);
-        double ordersPerSecond = valuePerSecond(currentNumberOfOrders, previousNumberOfOrders, previousUpdateTimeStamp);
+            Metric metric = new Metric(
+                    tradesPerSecond,
+                    ordersPerSecond,
+                    currentNumberOfTrades,
+                    currentNumberOfOrders
+            );
 
-        Metric metric = new Metric(
-                tradesPerSecond == 0 ? previousNumberOfTrades : tradesPerSecond,
-                ordersPerSecond == 0 ? previousOrdersPerSecond : ordersPerSecond,
-                currentNumberOfTrades,
-                currentNumberOfOrders
-        );
+            messagingTemplate.convertAndSend("/topic/tradeMetrics", metric);
 
-        messagingTemplate.convertAndSend("/topic/tradeMetrics", metric);
-
-        previousNumberOfTrades = currentNumberOfTrades;
-        previousNumberOfOrders = currentNumberOfOrders;
-        previousTradesPerSecond = tradesPerSecond == 0 ? previousTradesPerSecond : tradesPerSecond;
-        previousOrdersPerSecond = ordersPerSecond == 0 ? previousOrdersPerSecond : ordersPerSecond;
-        previousUpdateTimeStamp = Instant.now();
+            previousNumberOfTrades = currentNumberOfTrades;
+            previousNumberOfOrders = currentNumberOfOrders;
+            lastUpdateTime = Instant.now();
+        }
     }
 
     private double valuePerSecond(double currentNumberOfTrades, double previousNumberOfTrades, Instant lastUpdate) {

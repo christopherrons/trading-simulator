@@ -20,7 +20,6 @@ public class TradeGraphView {
     private long intervalAccumelatedQuantity = 0;
     private int intervalTotalTrades = 0;
     private long intervalWeightedPrice = 0;
-    private long currenTime = 0;
 
     @Autowired
     public TradeGraphView(SimpMessagingTemplate messagingTemplate) {
@@ -30,9 +29,10 @@ public class TradeGraphView {
     public void updateTradeGraphView(final Trade trade) {
         updateIntervalValues(trade);
 
-        if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
+        if (isUpdateIntervalMet()) {
             updateView("/topic/tradeGraph", new TradeDataPoint(calculateIntervalAveragePrice(), calculateVwap(), calculateVwap(), trade.getTimeStamp()));
             resetIntervalValues();
+            lastUpdateTime = Instant.now();
         }
     }
 
@@ -50,7 +50,6 @@ public class TradeGraphView {
 
 
     private void updateIntervalValues(Trade trade) {
-        currenTime = Instant.now().toEpochMilli();
         intervalAccumelatedPrice = intervalAccumelatedPrice + trade.getPrice();
         intervalAccumelatedQuantity = intervalAccumelatedQuantity + trade.getQuantity();
         intervalWeightedPrice = intervalWeightedPrice + (trade.getQuantity() * trade.getPrice());
@@ -58,11 +57,15 @@ public class TradeGraphView {
     }
 
     private void resetIntervalValues() {
-        lastUpdateTime = Instant.now();
         intervalAccumelatedPrice = 0;
         intervalAccumelatedQuantity = 0;
         intervalTotalTrades = 0;
         intervalWeightedPrice = 0;
+    }
+
+    private boolean isUpdateIntervalMet() {
+        long currenTime = Instant.now().toEpochMilli();
+        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 
     private static class TradeDataPoint {

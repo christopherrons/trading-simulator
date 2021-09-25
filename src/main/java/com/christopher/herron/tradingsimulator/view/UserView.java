@@ -1,7 +1,7 @@
 package com.christopher.herron.tradingsimulator.view;
 
-import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,7 +21,6 @@ public class UserView {
     private final int updateIntervallInMilliseconds = ViewConfigs.getUserViewUpdateIntervallInMilliseconds();
     private Instant lastUpdateTime = Instant.now();
 
-
     @Autowired
     public UserView(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -32,7 +31,10 @@ public class UserView {
             openOrders.remove(maxUserOrdersInTable - 1);
         }
         openOrders.add(order);
-        updateView("/topic/openOrders", openOrders);
+
+        if (isUpdateIntervalMet()) {
+            updateView("/topic/openOrders", openOrders);
+        }
     }
 
     public void updateFilledOrderTableView(final Order order) {
@@ -41,15 +43,19 @@ public class UserView {
         }
         filledOrders.add(order);
 
-        //  updateView("/topic/filledOrders", openOrders);
+        if (isUpdateIntervalMet()) {
+            //  updateView("/topic/filledOrders", openOrders);
+        }
     }
 
     private void updateView(String endPoint, List<Order> orders) {
+        messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orders));
+        lastUpdateTime = Instant.now();
+    }
+
+    private boolean isUpdateIntervalMet() {
         long currenTime = Instant.now().toEpochMilli();
-        if (currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds) {
-            messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orders));
-            lastUpdateTime = Instant.now();
-        }
+        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 }
 

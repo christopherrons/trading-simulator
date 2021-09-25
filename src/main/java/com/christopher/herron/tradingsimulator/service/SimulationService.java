@@ -15,6 +15,7 @@ public class SimulationService {
     private final OrderBookService orderBookService;
     private final UserService userService;
     private final OrderService orderService;
+    private TradeSimulation tradeSimulation;
 
     @Autowired
     public SimulationService(OrderBookService orderBookService, UserService userService, OrderService orderService) {
@@ -24,12 +25,17 @@ public class SimulationService {
     }
 
     public void runSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
+        this.tradeSimulation = tradeSimulation;
+        double sleepTime = 1000D / tradeSimulation.getOrdersPerSecond();
         for (int i = 0; i < tradeSimulation.getOrdersToGenerate(); i++) {
-            long generatationStart = Instant.now().toEpochMilli();
+            final long generatationStart = Instant.now().toEpochMilli();
             Order order = generateOrder();
             orderService.addOrder(order);
-            long generatationEnd = Instant.now().toEpochMilli();
-            Thread.sleep((1000 - (generatationEnd - generatationStart)) / tradeSimulation.getOrdersPerSecond());
+            final long generationTime = Instant.now().toEpochMilli() - generatationStart;
+
+            if (sleepTime - generationTime > 0) {
+                Thread.sleep((long) (sleepTime - generationTime));
+            }
         }
     }
 
@@ -43,5 +49,9 @@ public class SimulationService {
                 SimulationUtils.generatePrice(),
                 SimulationUtils.getRandomOrderType()
         );
+    }
+
+    public int getTradeSimulationOrdersToGenerate() {
+        return tradeSimulation.getOrdersToGenerate();
     }
 }

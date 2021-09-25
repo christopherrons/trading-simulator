@@ -13,7 +13,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 //TODO: Fix final web, make sure things are in the right place and javacsript checks inputs + add footer
 //TODO: Find bettter way to generate bid/ask prices
 //TODO: Add options to simulation form for if possible
-//TODO: Add task/threads for view updates
 
 @SpringBootApplication
 @EnableWebSocketMessageBroker

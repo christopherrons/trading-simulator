@@ -68,31 +68,34 @@ public class OrderBookView implements ApplicationListener<UpdateOrderBookViewEve
     }
 
     private List<Order> getTopOrders(final TreeMap<Long, LinkedList<Order>> orderIdToOrders, final OrderTypeEnum orderType) {
-        List<Order> orders = new ArrayList<>();
-        boolean topOrdersFound = false;
+        List<Order> topOrders = new ArrayList<>();
         for (LinkedList<Order> currentOrders : orderIdToOrders.values()) {
-            if (topOrdersFound) {
+            if (areTopOrdersFound(topOrders, currentOrders)) {
                 break;
-            }
-            for (Iterator<Order> orderIterator = currentOrders.iterator(); orderIterator.hasNext(); ) {
-                Order currentOrder = orderIterator.next();
-                if (currentOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
-                    orderIterator.remove();
-                } else {
-                    orders.add(currentOrder);
-                }
-                if (orders.size() == maxOrderbookOrdersInTable) {
-                    topOrdersFound = true;
-                    break;
-                }
             }
         }
 
         if (orderType == OrderTypeEnum.BUY) {
-            Collections.reverse(orders);
+            Collections.reverse(topOrders);
         }
-        return orders;
+        return topOrders;
     }
+
+    private boolean areTopOrdersFound(List<Order> topOrders, LinkedList<Order> currentOrders) {
+        for (Iterator<Order> orderIterator = currentOrders.iterator(); orderIterator.hasNext(); ) {
+            Order currentOrder = orderIterator.next();
+            if (currentOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
+                orderIterator.remove();
+            } else {
+                topOrders.add(currentOrder);
+            }
+            if (topOrders.size() == maxOrderbookOrdersInTable) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void update(String endPoint, List<DataTableWrapper<Order>> orderBookDataList) {
         messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orderBookDataList));

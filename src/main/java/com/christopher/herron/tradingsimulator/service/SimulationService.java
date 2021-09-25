@@ -32,15 +32,32 @@ public class SimulationService {
     public void runSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
         initTradeBots();
 
-        double sleepTime = tradeSimulation.getOrdersPerSecond() == 0 ? 0 : 1000D / tradeSimulation.getOrdersPerSecond();
+        if (tradeSimulation.getOrdersPerSecond() == 0) {
+            runFastSimulation(tradeSimulation);
+        } else {
+            runThrottledSimulation(tradeSimulation);
+        }
+    }
+
+    private void runFastSimulation(TradeSimulation tradeSimulation) {
         for (int i = 0; i < tradeSimulation.getOrdersToGenerate(); i++) {
-            final long generatationStart = Instant.now().toEpochMilli();
             Order order = generateOrder();
             orderService.addOrder(order);
+        }
+    }
+
+    private void runThrottledSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
+        double sleepTime = 1000D / tradeSimulation.getOrdersPerSecond();
+        for (int i = 0; i < tradeSimulation.getOrdersToGenerate(); i++) {
+            final long generatationStart = Instant.now().toEpochMilli();
+
+            Order order = generateOrder();
+            orderService.addOrder(order);
+
             final long generationTime = Instant.now().toEpochMilli() - generatationStart;
-
-            //    Thread.sleep((long) 1000D / tradeSimulation.getOrdersPerSecond());
-
+            if (sleepTime - generationTime  > 0) {
+                Thread.sleep((long) sleepTime - generationTime);
+            }
         }
     }
 

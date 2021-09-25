@@ -80,7 +80,7 @@ function connect() {
 }
 
 function showOpenOrders(openOrders) {
-    let tableBodyId = $("#user-data");
+    let tableBodyId = $("#user-order-data");
     tableBodyId.empty();
     for (let i = 0; i < openOrders.length; i++) {
         let orderType = openOrders[i]["orderType"] == 1 ? "BID" : "ASK";

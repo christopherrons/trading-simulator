@@ -18,6 +18,7 @@ com/christopher/herron/tradingsimulator/view/UserView$1.class
 com/christopher/herron/tradingsimulator/service/OrderBookService$2.class
 com/christopher/herron/tradingsimulator/view/TradeGraphView$TradeDataPoint.class
 com/christopher/herron/tradingsimulator/domain/model/Order.class
+com/christopher/herron/tradingsimulator/service/UserService$1.class
 com/christopher/herron/tradingsimulator/view/TradeTableView.class
 com/christopher/herron/tradingsimulator/domain/model/Trade.class
 com/christopher/herron/tradingsimulator/websocket/WebSocket.class

@@ -16,7 +16,7 @@ public class TradeService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final TradeCache tradeCache;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Autowired
     public TradeService(ApplicationEventPublisher applicationEventPublisher, TradeCache tradeCache) {
@@ -30,14 +30,12 @@ public class TradeService {
     }
 
     private void updateTradeViews(final Trade trade) {
-        applicationEventPublisher.publishEvent(new UpdateTradGraphViewEvent(this, trade));
-        applicationEventPublisher.publishEvent(new UpdateTradeTableViewEvent(this, trade));
-     /*   executorService.execute(new Runnable() {
+        executorService.execute(new Runnable() {
             public void run() {
                 applicationEventPublisher.publishEvent(new UpdateTradGraphViewEvent(this, trade));
                 applicationEventPublisher.publishEvent(new UpdateTradeTableViewEvent(this, trade));
             }
-        });*/
+        });
     }
 
     public long generateTradeId() {

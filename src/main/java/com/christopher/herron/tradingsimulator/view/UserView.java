@@ -46,13 +46,13 @@ public class UserView implements ApplicationListener<UpdateUserViewEvent> {
     }
 
     private void updateUserTableView(final String endpoint, final List<Order> orders, final Order order) {
-        openOrders.add(order);
+        orders.add(order);
         if (orders.size() > maxUserOrdersInTable) {
             orders.remove(maxUserOrdersInTable - 1);
         }
 
         if (isUpdateIntervalMet()) {
-            updateView(endpoint, openOrders);
+            updateView(endpoint, orders);
         }
     }
 

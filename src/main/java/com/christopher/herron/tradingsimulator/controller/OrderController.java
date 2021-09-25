@@ -18,7 +18,7 @@ public class OrderController {
 
     @MessageMapping("/orderEntry")
     public void addOrderEntry(Order order) {
-        orderService.addOrderEntryTEMPCHRILLE(order);
+        orderService.addOrderEntryFromUser(order);
     }
 }
 

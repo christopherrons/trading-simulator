@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.service;
 
 import com.christopher.herron.tradingsimulator.domain.cache.UserCache;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.domain.model.User;
 import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
 import com.christopher.herron.tradingsimulator.view.event.UpdateUserViewEvent;
@@ -33,6 +34,14 @@ public class UserService {
         executorService.execute(new Runnable() {
             public void run() {
                 applicationEventPublisher.publishEvent(new UpdateUserViewEvent(this, order));
+            }
+        });
+    }
+
+    public void updateUserOrderTableView(final Order order, final Trade trade) {
+        executorService.execute(new Runnable() {
+            public void run() {
+                applicationEventPublisher.publishEvent(new UpdateUserViewEvent(this, order, trade));
             }
         });
     }

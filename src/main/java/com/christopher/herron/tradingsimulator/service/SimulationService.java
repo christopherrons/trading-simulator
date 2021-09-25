@@ -7,7 +7,11 @@ import com.christopher.herron.tradingsimulator.domain.model.User;
 import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,7 @@ public class SimulationService {
 
     public void runSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
         initTradeBots();
+
 
         if (tradeSimulation.getOrdersPerSecond() == 0) {
             runFastSimulation(tradeSimulation);

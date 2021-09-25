@@ -4,6 +4,8 @@ import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.service.OrderBookService;
 import com.christopher.herron.tradingsimulator.service.TradeService;
+import com.christopher.herron.tradingsimulator.service.UserService;
+import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,13 @@ public class MatchingEngine {
 
     private final TradeService tradeService;
     private final OrderBookService orderBookService;
+    private final UserService userService;
 
     @Autowired
-    public MatchingEngine(TradeService tradeService, OrderBookService orderBookService) {
+    public MatchingEngine(TradeService tradeService, OrderBookService orderBookService, UserService userService) {
         this.tradeService = tradeService;
         this.orderBookService = orderBookService;
+        this.userService = userService;
     }
 
     public void matchOrders() {
@@ -29,7 +33,7 @@ public class MatchingEngine {
             }
 
             if (isMatch(buyOrder.getPrice(), sellOrder.getPrice())) {
-                runSettlementProcess(buyOrder, sellOrder);
+                runPostTradeProcess(buyOrder, sellOrder);
 
             } else {
                 break;
@@ -41,10 +45,18 @@ public class MatchingEngine {
         return buyPrice >= sellPrice;
     }
 
-    private void runSettlementProcess(final Order buyOrder, final Order sellOrder) {
+    private void runPostTradeProcess(final Order buyOrder, final Order sellOrder) {
         Trade trade = createTrade(buyOrder, sellOrder);
         tradeService.addTrade(trade);
+
         orderBookService.updateOrderBookAfterTrade(buyOrder, sellOrder, trade.getQuantity());
+
+        if (buyOrder.getUserId().equals(SimulationUtils.getSimulationUser())) {
+            userService.updateUserOrderTableView(buyOrder, trade);
+        }
+        if (sellOrder.getUserId().equals(SimulationUtils.getSimulationUser())) {
+            userService.updateUserOrderTableView(sellOrder, trade);
+        }
     }
 
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {

@@ -62,7 +62,7 @@
             <div class="metric-container">
                 <h2>Trade Engine Metrics</h2>
                 <p>Orders Created: </p>
-                <p id="display-orders-generated"> </p>
+                <p id="display-orders-generated"></p>
 
                 <p><br><br>Orders per Second: </p>
                 <p id="display-orders-per-second"></p>
@@ -75,20 +75,61 @@
             </div>
         </div>
 
-        <div class="col-md-12" id="user-order-data-conatiner">
+        <div class="user-order-data-container">
             <h2>User Order Data</h2>
-            <table class="table-data" id="user-order-data-table">
-                <thead>
-                <tr>
-                    <th>Order Type</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Create Date</th>
-                </tr>
-                </thead>
-                <tbody id="user-order-data">
-                </tbody>
-            </table>
+
+            <ul class="user-order-data-tabs">
+                <li rel="user-order-data-open-order-container" class="user-order-data-tabs active">Open Orders</li>
+                <li rel="user-order-data-filled-order-container">Filled Orders</li>
+                <li rel="user-order-data-trade-order-container">Trades</li>
+            </ul>
+
+            <div id="user-order-data-open-order-container" class="user-order-data active">
+                <table class="table-data" id="user-order-data-open-order-table">
+                    <thead>
+                    <tr>
+                        <th>Order Type</th>
+                        <th>Price</th>
+                        <th>Initial Quantity</th>
+                        <th>Current Quantity</th>
+                        <th>Create Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="user-order-data-open-order">
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div id="user-order-data-filled-order-container" class="user-order-data">
+                <table class="table-data" id="user-order-data-filled-table">
+                    <thead>
+                    <tr>
+                        <th>Order Type</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Create Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="user-order-data-filled-order">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="user-order-data-trade-order-container" class="user-order-data">
+                <table class="table-data" id="user-order-data-trade-table">
+                    <thead>
+                    <tr>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Trade Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="user-order-data-trades">
+                    </tbody>
+                </table>
+            </div>
+
         </div>
 
         <div class="col-md-12" id="order-book-container">

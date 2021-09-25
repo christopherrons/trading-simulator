@@ -8,10 +8,11 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 //FIx how settlement price is set
 //TODO: Add intrument
 //TODO: Change to one orderbook per instrument
-//TODO: Add tabs to user data
+//TODO: Fix user view
 //TODO: Fix orders per second
 //TODO: Fix final web, make sure things are in the right place and javacsript checks inputs + add footer
 //TODO: Find bettter way to generate bid/ask prices
+//TODO: Handle trading in decimals
 //TODO: Add options to simulation form for if possible
 
 @SpringBootApplication

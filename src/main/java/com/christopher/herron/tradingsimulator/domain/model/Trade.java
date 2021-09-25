@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.domain.model;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class Trade {
@@ -38,7 +39,7 @@ public class Trade {
     }
 
     public Instant getTimeStamp() {
-        return timeStamp;
+        return timeStamp.truncatedTo(ChronoUnit.SECONDS);
     }
 
     public String getTimeStampHourMiniteSecond() {

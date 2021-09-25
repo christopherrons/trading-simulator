@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.view.event.UpdateUserViewEvent;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
@@ -10,19 +11,19 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 
 @Component
 public class UserView implements ApplicationListener<UpdateUserViewEvent> {
 
-    public final List<Order> openOrders = new ArrayList<>();
-    public final List<Order> filledOrders = new ArrayList<>();
+    public final TreeMap<Long, Order> orderIdToOpenOrders = new TreeMap<>();
+    public final TreeMap<Long, Order> orderIdToFilledOrders = new TreeMap<>();
+    public final TreeMap<Long, Trade> tradeIdToTrade = new TreeMap<>();
     private final SimpMessagingTemplate messagingTemplate;
     private final int maxUserOrdersInTable = ViewConfigs.getMaxUserOrdersInTable();
-    private final int updateIntervallInMilliseconds = ViewConfigs.getUserViewUpdateIntervallInMilliseconds();
-    private Instant lastUpdateTime = Instant.now();
 
     @Autowired
     public UserView(SimpMessagingTemplate messagingTemplate) {
@@ -31,39 +32,52 @@ public class UserView implements ApplicationListener<UpdateUserViewEvent> {
 
     @Override
     public void onApplicationEvent(UpdateUserViewEvent updateUserViewEvent) {
-        updateUserTableView(updateUserViewEvent.getOrder());
+        if (updateUserViewEvent.getTrade() == null) {
+            updateUserOrderTableView(updateUserViewEvent.getOrder());
+        } else {
+            updateUserOrderTableView(updateUserViewEvent.getTrade());
+        }
     }
 
-    public void updateUserTableView(final Order order) {
+    public void updateUserOrderTableView(final Trade trade) {
+        updateUserTableView("/topic/userTrades", tradeIdToTrade, trade);
+    }
+
+    public void updateUserOrderTableView(final Order order) {
         switch (OrderStatusEnum.fromValue(order.getOrderStatus())) {
             case OPEN:
-                updateUserTableView("/topic/openOrders", openOrders, order);
+                updateUserTableView("/topic/openOrders", orderIdToOpenOrders, order);
                 break;
             case FILLED:
-                updateUserTableView("/topic/filledOrders", filledOrders, order);
+                updateUserTableView("/topic/filledOrders", orderIdToFilledOrders, order);
+
+                orderIdToOpenOrders.remove(order.getOrderId());
+                updateView("/topic/openOrders", new ArrayList<>(orderIdToOpenOrders.values()));
                 break;
         }
     }
 
-    private void updateUserTableView(final String endpoint, final List<Order> orders, final Order order) {
-        orders.add(order);
+    private void updateUserTableView(final String endpoint, final TreeMap<Long, Order> orders, final Order order) {
+        orders.putIfAbsent(order.getOrderId(), order);
         if (orders.size() > maxUserOrdersInTable) {
-            orders.remove(maxUserOrdersInTable - 1);
+            orders.pollFirstEntry();
         }
 
-        if (isUpdateIntervalMet()) {
-            updateView(endpoint, orders);
-        }
+        updateView(endpoint, new ArrayList<>(orders.values()));
     }
 
-    private void updateView(final String endPoint, final List<Order> orders) {
+    private void updateUserTableView(final String endpoint, final TreeMap<Long, Trade> trades, final Trade trade) {
+        trades.putIfAbsent(trade.getTradeId(), trade);
+        if (trades.size() > maxUserOrdersInTable) {
+            trades.pollFirstEntry();
+        }
+
+        updateView(endpoint, new ArrayList<>(trades.values()));
+    }
+
+    private <T> void updateView(final String endPoint, final List<T> orders) {
+        Collections.reverse(orders);
         messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orders));
-        lastUpdateTime = Instant.now();
-    }
-
-    private boolean isUpdateIntervalMet() {
-        long currenTime = Instant.now().toEpochMilli();
-        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 }
 

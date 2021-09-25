@@ -15,6 +15,7 @@ public class OrderBookService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final OrderBookCache orderBookCache;
+
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Autowired
@@ -22,6 +23,7 @@ public class OrderBookService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.orderBookCache = orderBookCache;
     }
+
 
     public void addOrderToOrderBook(final Order order) {
         orderBookCache.addOrderToOrderBook(order);
@@ -35,6 +37,7 @@ public class OrderBookService {
 
     public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {
         orderBookCache.updateOrderBookAfterTrade(buyOrder, sellOrder, tradeQuantity);
+
         executorService.execute(new Runnable() {
             public void run() {
                 applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this));

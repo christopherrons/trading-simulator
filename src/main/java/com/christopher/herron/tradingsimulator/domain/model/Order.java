@@ -4,6 +4,7 @@ import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnu
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class Order implements Comparable<Order> {
@@ -75,7 +76,7 @@ public class Order implements Comparable<Order> {
     }
 
     public Instant getTimeStamp() {
-        return timeStamp;
+        return timeStamp.truncatedTo(ChronoUnit.SECONDS);
     }
 
     public void setTimeStamp(Instant timeStamp) {

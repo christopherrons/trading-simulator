@@ -43,57 +43,113 @@ var myChart = new Chart(ctx, {
 });
 
 $(function () {
+    if (stompClient == null) {
+        connectWebsocket();
+    }
+
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    connect();
-    $("#submit-order-form").click(function () {
-        sendOrderForm();
+
+    $(".user-order-data-container .user-order-data-tabs li").click(function () {
+        const $userOrderDataViews = $(this).closest(".user-order-data-container");
+
+        $userOrderDataViews.find(".user-order-data-tabs li.user-order-data-tabs.active").removeClass("active");
+        $(this).addClass("user-order-data-tabs active");
+
+        const $userOrderDataToShow = $(this).attr('rel');
+
+        $userOrderDataViews.find(".user-order-data.active").slideUp(300, showNewUserData);
+
+        function showNewUserData() {
+            $(this).removeClass("active");
+            $("#" + $userOrderDataToShow).slideDown(300, function () {
+                $(this).addClass("active");
+            });
+        }
     });
-    $("#submit-simulation-form").click(function () {
-        sendSimulationForm();
-    });
+})
+
+$("#submit-order-form").click(function () {
+    sendOrderForm();
 });
 
+$("#submit-simulation-form").click(function () {
+    sendSimulationForm();
+});
 
-function connect() {
+function connectWebsocket() {
     const socket = new SockJS('/trading-simulator');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/openOrders', function (openOrders) {
-            showOpenOrders(JSON.parse(openOrders.body).dataList);
+            updateUserOpenOrders(JSON.parse(openOrders.body).dataList);
+        });
+        stompClient.subscribe('/topic/filledOrders', function (filledOrders) {
+            updateUserFilledOrders(JSON.parse(filledOrders.body).dataList);
+        });
+        stompClient.subscribe('/topic/userTrades', function (userTrades) {
+            updateUserTrades(JSON.parse(userTrades.body).dataList);
         });
         stompClient.subscribe('/topic/orderBook', function (orderBook) {
-            showOrderBook(JSON.parse(orderBook.body).dataList);
+            updateOrderBook(JSON.parse(orderBook.body).dataList);
         });
         stompClient.subscribe('/topic/trades', function (trades) {
-            showTrades(JSON.parse(trades.body).dataList);
+            updateTrades(JSON.parse(trades.body).dataList);
         });
         stompClient.subscribe('/topic/tradeGraph', function (tradeDataPoint) {
-            updateGraph(JSON.parse(tradeDataPoint.body));
+            updatePriceGraph(JSON.parse(tradeDataPoint.body));
         });
         stompClient.subscribe('/topic/tradeMetrics', function (metrics) {
-            showMetrics(JSON.parse(metrics.body));
+            updateTradeEngineMetrics(JSON.parse(metrics.body));
         });
     });
 }
 
-function showOpenOrders(openOrders) {
-    let tableBodyId = $("#user-order-data");
+function updateUserOpenOrders(openOrders) {
+    let tableBodyId = $("#user-order-data-open-order");
     tableBodyId.empty();
     for (let i = 0; i < openOrders.length; i++) {
         let orderType = openOrders[i]["orderType"] == 1 ? "BID" : "ASK";
         tableBodyId.append("<tr>" +
             "</tr><td>" + orderType + "</td> " +
             "<td>" + openOrders[i]["price"] + "</td>" +
+            "<td>" + openOrders[i]["initialQuantity"] + "</td>" +
             "<td>" + openOrders[i]["currentQuantity"] + "</td>" +
             "<td>" + openOrders[i]["timeStamp"] + "</td>" +
             "</tr>");
     }
 }
 
-function showOrderBook(orderBook) {
+function updateUserFilledOrders(filledOrders) {
+    let tableBodyId = $("#user-order-data-filled-order");
+    tableBodyId.empty();
+    for (let i = 0; i < filledOrders.length; i++) {
+        let orderType = filledOrders[i]["orderType"] == 1 ? "BID" : "ASK";
+        tableBodyId.append("<tr>" +
+            "</tr><td>" + orderType + "</td> " +
+            "<td>" + filledOrders[i]["price"] + "</td>" +
+            "<td>" + filledOrders[i]["initialQuantity"] + "</td>" +
+            "<td>" + filledOrders[i]["timeStamp"] + "</td>" +
+            "</tr>");
+    }
+}
+
+function updateUserTrades(userTrades) {
+    let tableBodyId = $("#user-order-data-trades");
+    tableBodyId.empty();
+    for (let i = 0; i < userTrades.length; i++) {
+        let orderType = userTrades[i]["orderType"] == 1 ? "BID" : "ASK";
+        tableBodyId.append("<tr>" +
+            "<td>" + userTrades[i]["price"] + "</td>" +
+            "<td>" + userTrades[i]["quantity"] + "</td>" +
+            "<td>" + userTrades[i]["timeStamp"] + "</td>" +
+            "</tr>");
+    }
+}
+
+function updateOrderBook(orderBook) {
     let tableBodyId = $("#order-book");
     tableBodyId.empty();
     addBuyOrders(tableBodyId, orderBook[0].dataList);
@@ -125,7 +181,7 @@ function addSellOrders(tableBodyId, sellOrders) {
     }
 }
 
-function showTrades(trades) {
+function updateTrades(trades) {
     let tableBodyId = $("#trades");
     tableBodyId.empty();
     for (let i = 0; i < trades.length; i++) {
@@ -137,7 +193,7 @@ function showTrades(trades) {
     }
 }
 
-function updateGraph(tradeDataPoint) {
+function updatePriceGraph(tradeDataPoint) {
     myChart.data.datasets[0].data[myChart.data.datasets[0].data.length] = tradeDataPoint["price"];
     myChart.data.datasets[1].data[myChart.data.datasets[1].data.length] = tradeDataPoint["vwap"];
     myChart.data.labels[myChart.data.labels.length] = tradeDataPoint["timeStamp"];
@@ -159,8 +215,8 @@ function sendOrderForm() {
     }));
 }
 
-function showMetrics(metrics) {
-    $("#display-orders-generated").empty().append(metrics["ordersGenerated"]) ;
+function updateTradeEngineMetrics(metrics) {
+    $("#display-orders-generated").empty().append(metrics["ordersGenerated"]);
     $("#display-orders-per-second").empty().append(metrics["ordersPerSecond"]);
     $("#display-trades-matched").empty().append(metrics["tradesMatched"]);
     $("#display-trades-per-second").empty().append(metrics["tradesPerSecond"]);

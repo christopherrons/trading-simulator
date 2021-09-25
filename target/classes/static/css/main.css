@@ -75,11 +75,12 @@ nav li a:hover {
     transition: 0.5s;
 }
 
-/* --- grid-elements --- */
+/* --- .grid-elements --- */
 .grid-elements {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 1em;
+    margin: 15px;
 }
 
 .grid-elements > div {
@@ -102,9 +103,7 @@ nav li a:hover {
     display: inline;
 }
 
-
-
-/* --- table-data --- */
+/* --- .table-data --- */
 .table-data {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
@@ -122,6 +121,63 @@ nav li a:hover {
     padding: 12px 15px;
 }
 
+/*.user-order-data.active{
+    overflow:hidden;
+    overflow-y: scroll;
+    height: 300px;
+}*/
+
+.user-order-data-container .table-data tbody, .user-order-data-container table thead {
+    display: block;
+}
+
+.user-order-data-container .table-data tbody {
+    overflow: auto;
+    height: 300px;
+}
+
+.user-order-data-container .table-data td {
+    width: 300px;
+}
+
+
+.user-order-data-container .table-data th {
+    width: 300px;
+}
+
+/* --- .user-order-data --- */
+.user-order-data-container ul {
+    margin: 0;
+    padding: 0;
+}
+
+.user-order-data-container ul li {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0;
+    padding: 3px 10px;
+    border-radius: 10px 10px 0 0;
+    background-color: rgba(0, 0, 111, 0.9);
+    color: white;
+    cursor: pointer;
+}
+
+.user-order-data-container ul li:hover {
+    color: #666666;
+    outline: none;
+    transition: 0.5s;
+}
+
+.user-order-data-container .user-order-data {
+    display: none;
+}
+
+
+.user-order-data-container .user-order-data.active {
+    display: block;
+}
+
+/* --- #trade-table --- */
 #trade-table tr {
     border-bottom: 1px solid #dddddd;
 }

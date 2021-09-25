@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.service;
 
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.User;
+import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Service
 public class OrderService {
 
-    private final String USER = "CHR";
     private final OrderBookService orderBookService;
     private final MatchingEngineService matchingEngineService;
     private final UserService userService;
@@ -25,10 +25,10 @@ public class OrderService {
         this.userService = userService;
     }
 
-    public void addOrderEntryTEMPCHRILLE(Order order) { //TODO: Fix this
-        userService.addUser(new User(USER));
+    public void addOrderEntryFromUser(Order order) {
+        userService.addUser(new User(SimulationUtils.getSimulationUser()));
 
-        order.setUserId(USER);
+        order.setUserId(SimulationUtils.getSimulationUser());
         order.setOrderId(orderBookService.generateOrderId());
         addOrder(order);
     }
@@ -36,8 +36,8 @@ public class OrderService {
     public void addOrder(Order order) {
         readWriteLock.writeLock().lock();
         try {
-            if (order.getUserId().equals(USER)) {
-                userService.updateUserOrderTableView(order); //TODO: Fix this
+            if (order.getUserId().equals(SimulationUtils.getSimulationUser())) {
+                userService.updateUserOrderTableView(order);
             }
 
             orderBookService.addOrderToOrderBook(order);

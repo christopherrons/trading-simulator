@@ -24,4 +24,8 @@ public class SimulationUtils {
     public static short getRandomOrderType() {
         return MathUtils.generateBoolean() ? OrderTypeEnum.BUY.getValue() : OrderTypeEnum.SELL.getValue();
     }
+
+    public static String getSimulationUser() {
+        return "ADMIN";
+    }
 }

@@ -28,6 +28,7 @@ com/christopher/herron/tradingsimulator/domain/tradeengine/MatchingEngine.class
 com/christopher/herron/tradingsimulator/service/OrderBookService$1.class
 com/christopher/herron/tradingsimulator/domain/model/PriceItem.class
 com/christopher/herron/tradingsimulator/view/OrderBookView$1.class
+com/christopher/herron/tradingsimulator/service/UserService$2.class
 com/christopher/herron/tradingsimulator/service/OrderService.class
 com/christopher/herron/tradingsimulator/view/TradeEngineMetricsView$Metric.class
 com/christopher/herron/tradingsimulator/domain/cache/TradeCache.class

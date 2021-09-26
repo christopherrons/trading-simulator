@@ -40,7 +40,7 @@ public class OrderBookService {
 
         executorService.execute(new Runnable() {
             public void run() {
-                applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this));
+                applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this, buyOrder, sellOrder));
             }
         });
     }

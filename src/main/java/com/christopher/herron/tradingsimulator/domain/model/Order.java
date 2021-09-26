@@ -76,7 +76,7 @@ public class Order implements Comparable<Order> {
     }
 
     public Instant getTimeStamp() {
-        return timeStamp.truncatedTo(ChronoUnit.SECONDS);
+        return timeStamp;
     }
 
     public void setTimeStamp(Instant timeStamp) {

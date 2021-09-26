@@ -15,6 +15,7 @@ com/christopher/herron/tradingsimulator/websocket/WebSocket.class
 com/christopher/herron/tradingsimulator/view/event/UpdateTradeTableViewEvent.class
 com/christopher/herron/tradingsimulator/controller/OrderController.class
 com/christopher/herron/tradingsimulator/view/TradeGraphView.class
+com/christopher/herron/tradingsimulator/view/UserView$UserTradeData.class
 com/christopher/herron/tradingsimulator/service/MatchingEngineService.class
 com/christopher/herron/tradingsimulator/service/TradeService$1.class
 com/christopher/herron/tradingsimulator/controller/SimulationController.class

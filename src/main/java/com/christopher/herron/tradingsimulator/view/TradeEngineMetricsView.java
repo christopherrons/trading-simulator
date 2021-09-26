@@ -72,7 +72,7 @@ public class TradeEngineMetricsView {
         }
 
         public double getTradesPerSecond() {
-            return tradesPerSecond; //TODO: Fix rounding
+            return tradesPerSecond;
         }
 
         public double getOrdersPerSecond() {
@@ -87,6 +87,5 @@ public class TradeEngineMetricsView {
             return ordersGenerated;
         }
     }
-
 }
 

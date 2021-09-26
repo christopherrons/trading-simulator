@@ -3,6 +3,7 @@ package com.christopher.herron.tradingsimulator.view;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
@@ -18,8 +19,8 @@ import java.util.*;
 @Component
 public class OrderBookView implements ApplicationListener<UpdateOrderBookViewEvent> {
 
-    public final TreeMap<Long, LinkedList<Order>> buyPriceToOrders = new TreeMap<>(Collections.reverseOrder());
-    public final TreeMap<Long, LinkedList<Order>> sellPriceToOrders = new TreeMap<>();
+    public final TreeMap<Long, LinkedList<Order>> buyPriceToOpenOrders = new TreeMap<>(Collections.reverseOrder());
+    public final TreeMap<Long, LinkedList<Order>> sellPriceToOpenOrders = new TreeMap<>();
     private final SimpMessagingTemplate messagingTemplate;
     private final int maxOrderbookOrdersInTable = ViewConfigs.getMaxOrderbookOrdersInTable();
     private final int updateIntervallInMilliseconds = ViewConfigs.getOrderBookViewUpdateIntervallInMilliseconds();
@@ -33,37 +34,37 @@ public class OrderBookView implements ApplicationListener<UpdateOrderBookViewEve
     @Override
     public void onApplicationEvent(UpdateOrderBookViewEvent updateOrderBookViewEvent) {
         if (updateOrderBookViewEvent.getNewOrder() == null) {
-            updateOrderBookViewAfterTrade();
+            updateOrderBookViewAfterTrade(updateOrderBookViewEvent.getBuyOrder(), updateOrderBookViewEvent.getSellOrder());
         } else {
             updateOrderBook(updateOrderBookViewEvent.getNewOrder());
         }
     }
 
-    public void updateOrderBookViewAfterTrade() {
-        if (isUpdateIntervalMet()) {
+    public void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellOrder) {
+        if (isUpdateIntervalMet() || buyOrder.getUserId().equals(SimulationUtils.getSimulationUser()) || sellOrder.getUserId().equals(SimulationUtils.getSimulationUser())) {
             createOrderBookDataList();
         }
     }
-
+1
     public void updateOrderBook(final Order order) {
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
-                buyPriceToOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
+                buyPriceToOpenOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
                 break;
             case SELL:
-                sellPriceToOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
+                sellPriceToOpenOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
                 break;
         }
 
-        if (isUpdateIntervalMet()) {
+        if (isUpdateIntervalMet() || order.getUserId().equals(SimulationUtils.getSimulationUser())) {
             createOrderBookDataList();
         }
     }
 
     private void createOrderBookDataList() {
         List<DataTableWrapper<Order>> orderBookDataList = new ArrayList<>();
-        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(buyPriceToOrders, OrderTypeEnum.BUY)));
-        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(sellPriceToOrders, OrderTypeEnum.SELL)));
+        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(buyPriceToOpenOrders, OrderTypeEnum.BUY)));
+        orderBookDataList.add(new DataTableWrapper<>(getTopOrders(sellPriceToOpenOrders, OrderTypeEnum.SELL)));
         update("/topic/orderBook", orderBookDataList);
     }
 

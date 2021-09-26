@@ -111,7 +111,7 @@ function updateUserOpenOrders(openOrders) {
     let tableBodyId = $("#user-order-data-open-order");
     tableBodyId.empty();
     for (let i = 0; i < openOrders.length; i++) {
-        let orderType = openOrders[i]["orderType"] == 1 ? "BID" : "ASK";
+        let orderType = openOrders[i]["orderType"] == 1 ? "BUY" : "SELL";
         tableBodyId.append("<tr>" +
             "</tr><td>" + orderType + "</td> " +
             "<td>" + openOrders[i]["price"] + "</td>" +
@@ -126,7 +126,7 @@ function updateUserFilledOrders(filledOrders) {
     let tableBodyId = $("#user-order-data-filled-order");
     tableBodyId.empty();
     for (let i = 0; i < filledOrders.length; i++) {
-        let orderType = filledOrders[i]["orderType"] == 1 ? "BID" : "ASK";
+        let orderType = filledOrders[i]["orderType"] == 1 ? "BUY" : "SELL";
         tableBodyId.append("<tr>" +
             "</tr><td>" + orderType + "</td> " +
             "<td>" + filledOrders[i]["price"] + "</td>" +
@@ -140,8 +140,8 @@ function updateUserTrades(userTrades) {
     let tableBodyId = $("#user-order-data-trades");
     tableBodyId.empty();
     for (let i = 0; i < userTrades.length; i++) {
-        let orderType = userTrades[i]["orderType"] == 1 ? "BID" : "ASK";
         tableBodyId.append("<tr>" +
+            "<td>" + userTrades[i]["orderType"] + "</td>" +
             "<td>" + userTrades[i]["price"] + "</td>" +
             "<td>" + userTrades[i]["quantity"] + "</td>" +
             "<td>" + userTrades[i]["timeStamp"] + "</td>" +

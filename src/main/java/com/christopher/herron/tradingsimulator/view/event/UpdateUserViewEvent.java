@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEvent;
 
 public class UpdateUserViewEvent extends ApplicationEvent {
 
-    private Order order;
+    private final Order order;
     private Trade trade;
 
     public UpdateUserViewEvent(Object source, Order order) {
@@ -14,6 +14,7 @@ public class UpdateUserViewEvent extends ApplicationEvent {
         this.order = order;
 
     }
+
     public UpdateUserViewEvent(Object source, Order order, Trade trade) {
         super(source);
         this.order = order;
@@ -27,4 +28,5 @@ public class UpdateUserViewEvent extends ApplicationEvent {
     public Trade getTrade() {
         return trade;
     }
+
 }

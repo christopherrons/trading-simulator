@@ -39,7 +39,7 @@ public class Trade {
     }
 
     public Instant getTimeStamp() {
-        return timeStamp.truncatedTo(ChronoUnit.SECONDS);
+        return timeStamp;
     }
 
     public String getTimeStampHourMiniteSecond() {

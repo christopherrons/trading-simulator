@@ -26,16 +26,16 @@
         </nav>
     </div>
 
-    <div class="grid-elements">
+    <div class="grid-elements" id="grid-elements">
 
-        <div class="col-md-12" id="create-order-form">
+        <div class="col-md-12" id="create-order-form-container">
             <h2>Create Limit Order</h2>
-            <form class="form-inline">
+            <form class="form-inline" name="create-order-form">
                 <div class="form-group">
                     <label for="price">Price</label>
-                    <input class="form-control" id="price" min="1" placeholder="Enter Price..." type="number">
+                    <input title="The price of the limit order." class="form-control" id="price" min="1" placeholder="Enter Price..." type="number">
                     <label for="quantity">Quantity</label>
-                    <input class="form-control" id="quantity" min="1" placeholder="Enter Quantity..." type="number">
+                    <input title="The quantity of the limit order." class="form-control" id="quantity" min="1" placeholder="Enter Quantity..." type="number">
                     <label><input name="order-type" type="radio" value="1" checked="checked">Buy</label>
                     <label><input name="order-type" type="radio" value="2">Sell</label>
                 </div>
@@ -49,10 +49,10 @@
                 <form class="form-inline">
                     <div class="form-group">
                         <label for="generate-orders">Generate Orders</label>
-                        <input class="form-control" id="generate-orders" min="1"
+                        <input title="Number of orders the simulation should generate" class="form-control" id="generate-orders" min="1"
                                placeholder="Number of orders to generate..." type="number">
                         <label for="orders-per-second">Orders per Second</label>
-                        <input class="form-control" id="orders-per-second" min="1" max="500"
+                        <input title="Number of orders per second the simulation should generate. Set value to 0 to run as fast as possible." class="form-control" id="orders-per-second" min="0" max="500"
                                placeholder="Number of generated orders per second..." type="number">
                     </div>
                     <button class="btn btn-default" id="submit-simulation-form" type="submit">Run Simulation</button>
@@ -168,9 +168,12 @@
                 </tbody>
             </table>
         </div>
-
         <script src="/js/main.js"></script>
     </div>
 </div>
+
+<footer>
+    <h2>Trading Simulator - Christopher Herron 2021</h2>
+</footer>
 </body>
 </html>

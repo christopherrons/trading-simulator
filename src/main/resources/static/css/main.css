@@ -4,7 +4,7 @@
 }
 
 /* --- Body --- */
-body {
+body, html {
     font-family: Arial, Helvetica, sans-serif;
     color: #666666;
     height: 100%;
@@ -30,7 +30,6 @@ h1, h2, h3 {
 
 h2 {
     margin-bottom: 1em;
-
 }
 
 header h1 {
@@ -40,10 +39,17 @@ header h1 {
     padding-bottom: 0.5rem;
 }
 
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
 footer h2 {
     padding-bottom: 0.5rem;
     padding-left: 0.75rem;
     padding-top: 0.75rem;
+    margin-bottom: 0;
 }
 
 /* --- nav --- */
@@ -74,6 +80,10 @@ nav li a:hover {
     outline: none;
     transition: 0.5s;
 }
+/* --- main-content --- */
+.main-content {
+    min-height: 100%;
+}
 
 /* --- .grid-elements --- */
 .grid-elements {
@@ -86,6 +96,7 @@ nav li a:hover {
 .grid-elements > div {
     background-color: rgba(238, 238, 238, 0.8);
     padding: 1em;
+    height: 530px;
 }
 
 .simulation-container {
@@ -121,13 +132,7 @@ nav li a:hover {
     padding: 12px 15px;
 }
 
-/*.user-order-data.active{
-    overflow:hidden;
-    overflow-y: scroll;
-    height: 300px;
-}*/
-
-.user-order-data-container .table-data tbody, .user-order-data-container table thead {
+/*.user-order-data-container .table-data tbody, .user-order-data-container table thead {
     display: block;
 }
 
@@ -143,7 +148,7 @@ nav li a:hover {
 
 .user-order-data-container .table-data th {
     width: 300px;
-}
+}*/
 
 /* --- .user-order-data --- */
 .user-order-data-container ul {

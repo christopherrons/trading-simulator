@@ -45,7 +45,7 @@ public class OrderBookView implements ApplicationListener<UpdateOrderBookViewEve
             createOrderBookDataList();
         }
     }
-1
+
     public void updateOrderBook(final Order order) {
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:

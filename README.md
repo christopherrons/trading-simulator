@@ -7,4 +7,5 @@ This web application houses a trading engine allowing the user to enter and gene
 
 # Run the Application
 Run the command:`mvn spring-boot:run`
+Open a browser and go to: `localhost:8080`
 

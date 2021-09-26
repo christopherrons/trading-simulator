@@ -71,12 +71,47 @@ $(function () {
 })
 
 $("#submit-order-form").click(function () {
-    sendOrderForm();
+    if (validateOrderForm()) {
+        sendOrderForm();
+    }
 });
 
 $("#submit-simulation-form").click(function () {
-    sendSimulationForm();
+    if (validateSimulationForm()) {
+        sendSimulationForm();
+    }
 });
+
+function validateOrderForm() {
+    const price = $.trim($('#price').val());
+    if (!price) {
+        alert('Price not specified!');
+        return false;
+    }
+
+    const quantity = $.trim($('#quantity').val());
+    if (!quantity) {
+        alert('Quantity not specified');
+        return false;
+    }
+
+    return true;
+}
+
+function validateSimulationForm() {
+    const nrOfOrders = $.trim($('#generate-orders').val());
+    if (!nrOfOrders) {
+        alert('Orders to generate not specified');
+        return false;
+    }
+
+    const ordersPerSecond = $.trim($('#orders-per-second').val());
+    if (!ordersPerSecond) {
+        $('#orders-per-second').val("0");
+    }
+
+    return true;
+}
 
 function connectWebsocket() {
     const socket = new SockJS('/trading-simulator');

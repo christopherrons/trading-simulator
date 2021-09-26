@@ -11,7 +11,7 @@ public class ViewConfigs {
     }
 
     public static int getMaxUserOrdersInTable() {
-        return 1000;
+        return 10;
     }
 
     public static int getOrderBookViewUpdateIntervallInMilliseconds() {

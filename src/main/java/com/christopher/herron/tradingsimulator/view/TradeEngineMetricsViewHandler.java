@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @EnableScheduling
 @Component
-public class TradeEngineMetricsView {
+public class TradeEngineMetricsViewHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final OrderBookService orderBookService;
@@ -24,7 +24,7 @@ public class TradeEngineMetricsView {
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired
-    public TradeEngineMetricsView(SimpMessagingTemplate messagingTemplate, OrderBookService orderBookService, TradeService tradeService) {
+    public TradeEngineMetricsViewHandler(SimpMessagingTemplate messagingTemplate, OrderBookService orderBookService, TradeService tradeService) {
         this.messagingTemplate = messagingTemplate;
         this.orderBookService = orderBookService;
         this.tradeService = tradeService;

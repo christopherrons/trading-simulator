@@ -45,12 +45,12 @@ public class OrderBookService {
         });
     }
 
-    public Order getBestBuyOrder() {
-        return orderBookCache.getBestBuyOrder();
+    public Order getBestBuyOrder(final String instrumentId) {
+        return orderBookCache.getBestBuyOrder(instrumentId);
     }
 
-    public Order getBestSellOrder() {
-        return orderBookCache.getBestSellOrder();
+    public Order getBestSellOrder(final String instrumentId) {
+        return orderBookCache.getBestSellOrder(instrumentId);
     }
 
     public long generateOrderId() {

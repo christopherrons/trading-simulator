@@ -7,11 +7,7 @@ import com.christopher.herron.tradingsimulator.domain.model.User;
 import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +56,7 @@ public class SimulationService {
             orderService.addOrder(order);
 
             final long generationTime = Instant.now().toEpochMilli() - generatationStart;
-            if (sleepTime - generationTime  > 0) {
+            if (sleepTime - generationTime > 0) {
                 Thread.sleep((long) sleepTime - generationTime);
             }
         }
@@ -82,7 +78,8 @@ public class SimulationService {
                 Instant.now(),
                 SimulationUtils.generateQuantity(),
                 SimulationUtils.generatePrice(),
-                SimulationUtils.getRandomOrderType()
+                SimulationUtils.getRandomOrderType(),
+                SimulationUtils.getSimulationInstrumentId()
         );
     }
 }

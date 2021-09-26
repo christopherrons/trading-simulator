@@ -12,7 +12,7 @@ public class MatchingEngineService {
         this.matchingEngine = matchingEngine;
     }
 
-    public void runMatchingEngine() {
-        matchingEngine.matchOrders();
+    public void runMatchingEngine(final String instrumentId) {
+        matchingEngine.matchOrders(instrumentId);
     }
 }

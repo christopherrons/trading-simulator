@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.view;
 
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.view.event.UpdateTradeTableViewEvent;
+import com.christopher.herron.tradingsimulator.view.model.TradeTableView;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,36 +11,30 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class TradeTableView implements ApplicationListener<UpdateTradeTableViewEvent> {
+public class TradeTableViewHandler implements ApplicationListener<UpdateTradeTableViewEvent> {
 
-    public final List<Trade> trades = new ArrayList<>();
+    private final static String TRADE_TABLE_ENDPOINT = "/topic/trades";
     private final SimpMessagingTemplate messagingTemplate;
-    private final int maxTradesInTable = ViewConfigs.getMaxTradesInTable();
     private final int updateIntervallInMilliseconds = ViewConfigs.getTradeTableViewUpdateIntervallInMilliseconds();
+    private final Map<String, TradeTableView> instrumentIdToTradeTableView = new ConcurrentHashMap<>();
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired
-    public TradeTableView(SimpMessagingTemplate messagingTemplate) {
+    public TradeTableViewHandler(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
     @Override
     public void onApplicationEvent(UpdateTradeTableViewEvent updateTradGraphViewEvent) {
-        updateTradeTableView(updateTradGraphViewEvent.getTrade());
-    }
-
-    public void updateTradeTableView(final Trade trade) {
-        if (trades.size() > maxTradesInTable) {
-            trades.remove(maxTradesInTable - 1);
-        }
-        trades.add(0, trade);
-
+        TradeTableView tradeTableView = instrumentIdToTradeTableView.computeIfAbsent(updateTradGraphViewEvent.getTrade().getInstrumentId(), key -> new TradeTableView());
+        tradeTableView.updateTradeTableData(updateTradGraphViewEvent.getTrade());
         if (isUpdateIntervalMet()) {
-            updateView("/topic/trades", trades);
+            updateView(TRADE_TABLE_ENDPOINT, tradeTableView.getTrades());
         }
     }
 

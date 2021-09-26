@@ -4,7 +4,6 @@ import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnu
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class Order implements Comparable<Order> {
@@ -17,11 +16,12 @@ public class Order implements Comparable<Order> {
     private Instant timeStamp = Instant.now();
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
+    private String instrumentId;
 
     public Order() {
     }
 
-    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long quantity, long price, short orderType) {
+    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long quantity, long price, short orderType, String instrumentId) {
         Order order = new Order();
         order.setOrderId(orderId);
         order.setUserId(userId);
@@ -31,6 +31,7 @@ public class Order implements Comparable<Order> {
         order.setInitialQuantity(quantity);
         order.setPrice(price);
         order.setOrderType(orderType);
+        order.setInstrumentId(instrumentId);
         return order;
     }
 
@@ -105,6 +106,14 @@ public class Order implements Comparable<Order> {
 
     public void setOrderStatus(short orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public String getInstrumentId() {
+        return instrumentId;
+    }
+
+    public void setInstrumentId(String instrumentId) {
+        this.instrumentId = instrumentId;
     }
 
     public String getTimeStampHourMiniteSecond() {

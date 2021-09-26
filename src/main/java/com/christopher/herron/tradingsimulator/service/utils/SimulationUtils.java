@@ -28,4 +28,8 @@ public class SimulationUtils {
     public static String getSimulationUser() {
         return "ADMIN";
     }
+
+    public static String getSimulationInstrumentId() {
+        return "DOGE";
+    }
 }

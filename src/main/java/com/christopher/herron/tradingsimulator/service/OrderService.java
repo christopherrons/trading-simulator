@@ -29,6 +29,7 @@ public class OrderService {
         userService.addUser(new User(SimulationUtils.getSimulationUser()));
 
         order.setUserId(SimulationUtils.getSimulationUser());
+        order.setInstrumentId(SimulationUtils.getSimulationInstrumentId());
         order.setOrderId(orderBookService.generateOrderId());
         addOrder(order);
     }
@@ -45,6 +46,6 @@ public class OrderService {
             readWriteLock.writeLock().unlock();
         }
 
-        matchingEngineService.runMatchingEngine();
+        matchingEngineService.runMatchingEngine(SimulationUtils.getSimulationInstrumentId());
     }
 }

@@ -1,80 +1,64 @@
-package com.christopher.herron.tradingsimulator.view;
+package com.christopher.herron.tradingsimulator.view.model;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
-import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
-import com.christopher.herron.tradingsimulator.view.event.UpdateUserViewEvent;
-import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
-@Component
-public class UserView implements ApplicationListener<UpdateUserViewEvent> {
+public class UserView {
 
     public final TreeMap<Long, Order> orderIdToOpenOrders = new TreeMap<>();
     public final TreeMap<Long, Order> orderIdToFilledOrders = new TreeMap<>();
     public final TreeMap<Long, UserTradeData> tradeIdToTrade = new TreeMap<>();
-    private final SimpMessagingTemplate messagingTemplate;
     private final int maxUserOrdersInTable = ViewConfigs.getMaxUserOrdersInTable();
 
-    @Autowired
-    public UserView(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public UserView() {
     }
 
-    @Override
-    public void onApplicationEvent(UpdateUserViewEvent updateUserViewEvent) {
-        if (updateUserViewEvent.getTrade() != null) {
-            updateUserOrderTableView(updateUserViewEvent.getTrade(), updateUserViewEvent.getOrder().getOrderType());
-        }
-        updateUserOrderTableView(updateUserViewEvent.getOrder());
-    }
-
-    public void updateUserOrderTableView(final Trade trade, final short orderType) {
+    public void updateUserTradeTable(final Trade trade, final short orderType) {
         UserTradeData userTradeData = new UserTradeData(trade, OrderTypeEnum.fromValue(orderType));
         tradeIdToTrade.putIfAbsent(orderType == OrderTypeEnum.BUY.getValue() ? trade.getBuyOrderId() : trade.getSellOrderId(), userTradeData);
-        updateUserTableView("/topic/userTrades", tradeIdToTrade, userTradeData);
+        removeExcessData(tradeIdToTrade);
     }
 
-    public void updateUserOrderTableView(final Order order) {
+    public void updateUserOrderTable(final Order order) {
         switch (OrderStatusEnum.fromValue(order.getOrderStatus())) {
             case OPEN:
                 orderIdToOpenOrders.putIfAbsent(order.getOrderId(), order);
-                updateUserTableView("/topic/openOrders", orderIdToOpenOrders, order);
+                removeExcessData(orderIdToOpenOrders);
                 break;
             case FILLED:
                 orderIdToOpenOrders.remove(order.getOrderId());
 
                 orderIdToFilledOrders.putIfAbsent(order.getOrderId(), order);
-                updateUserTableView("/topic/filledOrders", orderIdToFilledOrders, order);
+                removeExcessData(orderIdToFilledOrders);
 
-                updateView("/topic/openOrders", new ArrayList<>(orderIdToOpenOrders.values()));
                 break;
         }
     }
 
-    private <T> void updateUserTableView(final String endpoint, final TreeMap<Long, T> dataTable, final T data) {
+    private <T> void removeExcessData(final TreeMap<Long, T> dataTable) {
         if (dataTable.size() > maxUserOrdersInTable) {
             dataTable.pollFirstEntry();
         }
-
-        updateView(endpoint, new ArrayList<>(dataTable.values()));
     }
 
-    private <T> void updateView(final String endPoint, final List<T> orders) {
-        Collections.reverse(orders);
-        messagingTemplate.convertAndSend(endPoint, new DataTableWrapper<>(orders));
+    public List<Order> getOpenOrderTable() {
+        return new ArrayList<>(orderIdToOpenOrders.values());
+    }
+
+    public List<Order> getFilledOrderTable() {
+        return new ArrayList<>(orderIdToFilledOrders.values());
+    }
+
+    public List<UserTradeData> getUserTradeTable() {
+        return new ArrayList<>(tradeIdToTrade.values());
     }
 
     private static class UserTradeData {

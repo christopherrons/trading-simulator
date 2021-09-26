@@ -23,10 +23,10 @@ public class MatchingEngine {
         this.userService = userService;
     }
 
-    public void matchOrders() {
+    public void matchOrders(final String instrumentId) {
         while (true) {
-            Order buyOrder = orderBookService.getBestBuyOrder();
-            Order sellOrder = orderBookService.getBestSellOrder();
+            Order buyOrder = orderBookService.getBestBuyOrder(instrumentId);
+            Order sellOrder = orderBookService.getBestSellOrder(instrumentId);
 
             if (isOneSided(buyOrder, sellOrder)) {
                 return;
@@ -62,9 +62,9 @@ public class MatchingEngine {
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {
         long quantityTraded = quantityTraded(buyOrder.getCurrentQuantity(), sellOrder.getCurrentQuantity());
         if (isBuyOrderTaker(buyOrder, sellOrder)) {
-            return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId());
+            return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId(), buyOrder.getInstrumentId());
         } else {
-            return new Trade(sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId());
+            return new Trade(sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId(), sellOrder.getInstrumentId());
         }
     }
 

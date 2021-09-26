@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Date;
 
 @Component
-public class TradeGraphView implements ApplicationListener<UpdateTradGraphViewEvent> {
+public class TradeGraphViewHandler implements ApplicationListener<UpdateTradGraphViewEvent> {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final int updateIntervallInMilliseconds = ViewConfigs.getTradeGraphViewUpdateIntervallInMilliseconds();
@@ -24,7 +24,7 @@ public class TradeGraphView implements ApplicationListener<UpdateTradGraphViewEv
     private long intervalWeightedPrice = 0;
 
     @Autowired
-    public TradeGraphView(SimpMessagingTemplate messagingTemplate) {
+    public TradeGraphViewHandler(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 

@@ -4,7 +4,6 @@ import com.christopher.herron.tradingsimulator.domain.cache.UserCache;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.domain.model.User;
-import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
 import com.christopher.herron.tradingsimulator.view.event.UpdateUserViewEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

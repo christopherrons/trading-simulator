@@ -6,8 +6,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 //FIx how settlement price is set
-//TODO: Add intrument
-//TODO: Change to one orderbook per instrument
 //TODO: Fix orders per second
 //TODO: Find bettter way to generate bid/ask prices +  Add options to simulation form for if relevant
 //TODO: Handle trading in decimals

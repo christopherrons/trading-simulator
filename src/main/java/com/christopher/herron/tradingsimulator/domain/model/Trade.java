@@ -2,7 +2,6 @@ package com.christopher.herron.tradingsimulator.domain.model;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class Trade {
@@ -13,13 +12,15 @@ public class Trade {
     private final long buyOrderId;
     private final long sellOrderId;
     private final long tradeId;
+    private final String instrumentId;
 
-    public Trade(long price, long quantity, long buyOrderId, long sellOrderId, long tradeId) {
+    public Trade(long price, long quantity, long buyOrderId, long sellOrderId, long tradeId, String instrumentId) {
         this.price = price;
         this.quantity = quantity;
         this.buyOrderId = buyOrderId;
         this.sellOrderId = sellOrderId;
         this.tradeId = tradeId;
+        this.instrumentId = instrumentId;
     }
 
     public long getPrice() {
@@ -49,5 +50,9 @@ public class Trade {
 
     public long getTradeId() {
         return tradeId;
+    }
+
+    public String getInstrumentId() {
+        return instrumentId;
     }
 }

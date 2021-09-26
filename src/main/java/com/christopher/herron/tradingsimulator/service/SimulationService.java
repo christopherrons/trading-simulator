@@ -38,7 +38,7 @@ public class SimulationService {
         if (tradeSimulation.getOrdersPerSecond() == 0) {
             runFastSimulation(tradeSimulation);
         } else {
-            runThrottledSimulation(tradeSimulation);
+            runThrottledSimulationTest(tradeSimulation);
         }
     }
 
@@ -62,6 +62,31 @@ public class SimulationService {
                 Thread.sleep((long) sleepTime - generationTime);
             }
         }
+    }
+
+    private void runThrottledSimulationTest(TradeSimulation tradeSimulation) throws InterruptedException {
+        double sleepTime = 1000000D / tradeSimulation.getOrdersPerSecond();
+        long ordersGenerated = 0;
+        long lastGeneratedTimeStamp = System.nanoTime();
+        long generationTime = System.nanoTime();
+        long generationStartTime = System.nanoTime();
+        while (ordersGenerated < tradeSimulation.getOrdersToGenerate()) {
+
+            if (generateIntervalPassed(lastGeneratedTimeStamp, sleepTime, generationTime)) {
+                generationStartTime = System.nanoTime();
+                Order order = generateOrder();
+                orderService.addOrder(order);
+                ordersGenerated++;
+                lastGeneratedTimeStamp = System.nanoTime();
+
+                generationTime = System.nanoTime() - generationStartTime;
+            }
+
+        }
+    }
+
+    private boolean generateIntervalPassed(long lastGeneratedTimeStamp, double sleepTime, long generatioTime) {
+        return System.nanoTime() - lastGeneratedTimeStamp > sleepTime - generatioTime;
     }
 
     private void initTradeBots() {

@@ -105,7 +105,7 @@ function validateSimulationForm() {
     }
 
     const ordersPerSecond = $.trim($('#orders-per-second').val());
-    if (parseFloat(ordersPerSecond) > 500) {
+    if (parseFloat(ordersPerSecond) > 5000) {
         return false;
     }
     if (!ordersPerSecond) {

@@ -9,9 +9,13 @@ public class SimulationUtils {
         return MathUtils.generateRandomUniformNumber(0, upperBound);
     }
 
-    public static long generatePrice() {
-        long lowerBound = 90;
-        long upperBound = 110;
+    public static double generateRandomNormalPrice(double mean, double standardDeviation) {
+        return MathUtils.generateRandomNormalPrice(mean, standardDeviation);
+    }
+
+    public static double generateRandomUniformPrice() {
+        double lowerBound = 90;
+        double upperBound = 110;
         return MathUtils.generateRandomUniformNumber(lowerBound, upperBound);
     }
 
@@ -23,6 +27,10 @@ public class SimulationUtils {
 
     public static short getRandomOrderType() {
         return MathUtils.generateBoolean() ? OrderTypeEnum.BUY.getValue() : OrderTypeEnum.SELL.getValue();
+    }
+
+    public static short getDecimalsInPrice() {
+        return 5;
     }
 
     public static String getSimulationUser() {

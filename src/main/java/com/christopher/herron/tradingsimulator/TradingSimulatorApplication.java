@@ -5,12 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
-//FIx how settlement price is set
-//TODO: Fix orders per second
-//TODO: Find bettter way to generate bid/ask prices +  Add options to simulation form for if relevant
-//TODO: Handle trading in decimals
-//TODO: Add about page
 
+//TODO: Check Vwap Calculation + Check orderbook bid bug when stresstesting
+//TODO: Add about page
+//TODO: Final code analysis and stresstesting
 
 @SpringBootApplication
 @EnableWebSocketMessageBroker

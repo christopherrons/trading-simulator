@@ -1,6 +1,8 @@
 package com.christopher.herron.tradingsimulator.domain.model;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
+import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
+import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -17,11 +19,12 @@ public class Order implements Comparable<Order> {
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
     private String instrumentId;
+    private final short decimalsInPrice = SimulationUtils.getDecimalsInPrice();
 
     public Order() {
     }
 
-    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long quantity, long price, short orderType, String instrumentId) {
+    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long quantity, double price, short orderType, String instrumentId) {
         Order order = new Order();
         order.setOrderId(orderId);
         order.setUserId(userId);
@@ -72,8 +75,8 @@ public class Order implements Comparable<Order> {
         return price;
     }
 
-    public void setPrice(long price) {
-        this.price = price;
+    public void setPrice(double price) {
+        this.price = (long) (price * MathUtils.ADDING_FACTORS[decimalsInPrice]);
     }
 
     public Instant getTimeStamp() {
@@ -114,6 +117,14 @@ public class Order implements Comparable<Order> {
 
     public void setInstrumentId(String instrumentId) {
         this.instrumentId = instrumentId;
+    }
+
+    public short getDecimalsInPrice() {
+        return decimalsInPrice;
+    }
+
+    public double getPriceAsDouble() {
+        return MathUtils.convertToDouble(this.price, this.decimalsInPrice);
     }
 
     public String getTimeStampHourMiniteSecond() {

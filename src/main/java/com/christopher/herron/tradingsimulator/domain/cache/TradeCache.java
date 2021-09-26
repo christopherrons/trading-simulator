@@ -4,12 +4,13 @@ import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class TradeCache {
 
-    private final Map<Long, Trade> tradeIdToTrade = new ConcurrentHashMap<>();
+    private final TreeMap<Long, Trade> tradeIdToTrade = new TreeMap<>();
 
     public TradeCache() {
     }
@@ -24,6 +25,10 @@ public class TradeCache {
 
     public long getTotalNumberOfTrades() {
         return tradeIdToTrade.size();
+    }
+
+    public double getLatestPrice() {
+        return tradeIdToTrade.isEmpty() ? 100.0 : tradeIdToTrade.lastEntry().getValue().getPriceAsDouble();
     }
 
 }

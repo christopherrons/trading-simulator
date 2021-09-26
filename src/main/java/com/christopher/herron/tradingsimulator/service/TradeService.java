@@ -45,4 +45,8 @@ public class TradeService {
     public long getTotalNumberOfTrades() {
         return tradeCache.getTotalNumberOfTrades();
     }
+
+    public double getLatestPrice() {
+        return tradeCache.getLatestPrice();
+    }
 }

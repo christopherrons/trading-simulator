@@ -19,14 +19,16 @@ public class SimulationService {
     private final OrderBookService orderBookService;
     private final UserService userService;
     private final OrderService orderService;
+    private final TradeService tradeService;
     private final int nrOfBots = 100;
     private final List<User> tradeBotUsers = new ArrayList<>();
 
     @Autowired
-    public SimulationService(OrderBookService orderBookService, UserService userService, OrderService orderService) {
+    public SimulationService(OrderBookService orderBookService, UserService userService, OrderService orderService, TradeService tradeService) {
         this.orderBookService = orderBookService;
         this.userService = userService;
         this.orderService = orderService;
+        this.tradeService = tradeService;
     }
 
     public void runSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
@@ -71,14 +73,16 @@ public class SimulationService {
     }
 
     private Order generateOrder() {
+        short orderType = SimulationUtils.getRandomOrderType();
         return Order.valueOf(
                 orderBookService.generateOrderId(),
                 tradeBotUsers.get(SimulationUtils.getRandomTradeBot(nrOfBots - 1)).getUserId(),
                 OrderStatusEnum.OPEN.getValue(),
                 Instant.now(),
                 SimulationUtils.generateQuantity(),
-                SimulationUtils.generatePrice(),
-                SimulationUtils.getRandomOrderType(),
+                orderType == 1 ? SimulationUtils.generateRandomNormalPrice(tradeService.getLatestPrice() - 2, 3) :
+                        SimulationUtils.generateRandomNormalPrice(tradeService.getLatestPrice() + 2, 3),
+                orderType,
                 SimulationUtils.getSimulationInstrumentId()
         );
     }

@@ -2,6 +2,7 @@ package com.christopher.herron.tradingsimulator.view.model;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
+import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
@@ -65,9 +66,10 @@ public class UserView {
 
         private final OrderTypeEnum orderType;
         private final long tradeId;
-        private final double price;
+        private final long price;
         private final long quantity;
         private final Instant timeStamp;
+        private final short decimalsInPrice;
 
         public UserTradeData(Trade trade, OrderTypeEnum orderType) {
             this.orderType = orderType;
@@ -75,14 +77,19 @@ public class UserView {
             this.price = trade.getPrice();
             this.quantity = trade.getQuantity();
             this.timeStamp = trade.getTimeStamp();
+            this.decimalsInPrice = trade.getDecimalsInPrice();
         }
 
         public OrderTypeEnum getOrderType() {
             return orderType;
         }
 
-        public double getPrice() {
+        public long getPrice() {
             return price;
+        }
+
+        public double getPriceAsDouble() {
+            return MathUtils.convertToDouble(this.price, this.decimalsInPrice);
         }
 
         public long getQuantity() {

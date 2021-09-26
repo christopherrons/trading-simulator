@@ -84,14 +84,14 @@ $("#submit-simulation-form").click(function () {
 
 function validateOrderForm() {
     const price = $.trim($('#price').val());
-    if (!price) {
-        alert('Price not specified!');
+    const priceValues = $.trim($('#price').val()).split(".");
+    const decimals = priceValues[1] != null ? priceValues[1] : "1";
+    if (!price || decimals.length > 5) {
         return false;
     }
 
     const quantity = $.trim($('#quantity').val());
     if (!quantity) {
-        alert('Quantity not specified');
         return false;
     }
 
@@ -101,11 +101,13 @@ function validateOrderForm() {
 function validateSimulationForm() {
     const nrOfOrders = $.trim($('#generate-orders').val());
     if (!nrOfOrders) {
-        alert('Orders to generate not specified');
         return false;
     }
 
     const ordersPerSecond = $.trim($('#orders-per-second').val());
+    if (parseFloat(ordersPerSecond) > 500) {
+        return false;
+    }
     if (!ordersPerSecond) {
         $('#orders-per-second').val("0");
     }
@@ -149,7 +151,7 @@ function updateUserOpenOrders(openOrders) {
         let orderType = openOrders[i]["orderType"] == 1 ? "BUY" : "SELL";
         tableBodyId.append("<tr>" +
             "</tr><td>" + orderType + "</td> " +
-            "<td>" + openOrders[i]["price"] + "</td>" +
+            "<td>" + openOrders[i]["priceAsDouble"] + "</td>" +
             "<td>" + openOrders[i]["initialQuantity"] + "</td>" +
             "<td>" + openOrders[i]["currentQuantity"] + "</td>" +
             "<td>" + openOrders[i]["timeStamp"] + "</td>" +
@@ -164,7 +166,7 @@ function updateUserFilledOrders(filledOrders) {
         let orderType = filledOrders[i]["orderType"] == 1 ? "BUY" : "SELL";
         tableBodyId.append("<tr>" +
             "</tr><td>" + orderType + "</td> " +
-            "<td>" + filledOrders[i]["price"] + "</td>" +
+            "<td>" + filledOrders[i]["priceAsDouble"] + "</td>" +
             "<td>" + filledOrders[i]["initialQuantity"] + "</td>" +
             "<td>" + filledOrders[i]["timeStamp"] + "</td>" +
             "</tr>");
@@ -177,7 +179,7 @@ function updateUserTrades(userTrades) {
     for (let i = 0; i < userTrades.length; i++) {
         tableBodyId.append("<tr>" +
             "<td>" + userTrades[i]["orderType"] + "</td>" +
-            "<td>" + userTrades[i]["price"] + "</td>" +
+            "<td>" + userTrades[i]["priceAsDouble"] + "</td>" +
             "<td>" + userTrades[i]["quantity"] + "</td>" +
             "<td>" + userTrades[i]["timeStamp"] + "</td>" +
             "</tr>");
@@ -195,7 +197,7 @@ function addBuyOrders(tableBodyId, buyOrders) {
     for (let i = 0; i < buyOrders.length; i++) {
         tableBodyId.append("<tr id=tempBuy" + i + ">" +
             "<td>" + "BID" + "</td>" +
-            "<td>" + buyOrders[i]["price"] + "</td>" +
+            "<td>" + buyOrders[i]["priceAsDouble"] + "</td>" +
             "<td>" + buyOrders[i]["currentQuantity"] + "</td>" +
             "<td>" + buyOrders[i]["timeStampHourMiniteSecond"] + "</td>" +
             "</tr>");
@@ -208,7 +210,7 @@ function addSellOrders(tableBodyId, sellOrders) {
     for (let i = 0; i < sellOrders.length; i++) {
         tableBodyId.append("<tr id=tempSell" + i + ">" +
             "<td>" + "ASK" + "</td>" +
-            "<td>" + sellOrders[i]["price"] + "</td>" +
+            "<td>" + sellOrders[i]["priceAsDouble"] + "</td>" +
             "<td>" + sellOrders[i]["currentQuantity"] + "</td>" +
             "<td>" + sellOrders[i]["timeStampHourMiniteSecond"] + "</td>" +
             "</tr>");
@@ -221,7 +223,7 @@ function updateTrades(trades) {
     tableBodyId.empty();
     for (let i = 0; i < trades.length; i++) {
         tableBodyId.append("<tr>" +
-            "</tr><td>" + trades[i]["price"] + "</td>" +
+            "</tr><td>" + trades[i]["priceAsDouble"] + "</td>" +
             "<td>" + trades[i]["quantity"] + "</td>" +
             "<td>" + trades[i]["timeStampHourMiniteSecond"] + "</td>" +
             "</tr>");

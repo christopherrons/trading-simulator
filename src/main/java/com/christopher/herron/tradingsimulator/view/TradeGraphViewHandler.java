@@ -1,5 +1,6 @@
 package com.christopher.herron.tradingsimulator.view;
 
+import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.view.event.UpdateTradGraphViewEvent;
 import com.christopher.herron.tradingsimulator.view.utils.ViewConfigs;
@@ -37,7 +38,7 @@ public class TradeGraphViewHandler implements ApplicationListener<UpdateTradGrap
         updateIntervalValues(trade);
 
         if (isUpdateIntervalMet()) {
-            updateView("/topic/tradeGraph", new TradeDataPoint(calculateIntervalAveragePrice(), calculateVwap(), calculateVwap(), trade.getTimeStamp()));
+            updateView("/topic/tradeGraph", new TradeDataPoint(calculateIntervalAveragePrice(), calculateVwap(), calculateVwap(), trade.getTimeStamp(), trade.getDecimalsInPrice()));
             resetIntervalValues();
             lastUpdateTime = Instant.now();
         }
@@ -80,20 +81,22 @@ public class TradeGraphViewHandler implements ApplicationListener<UpdateTradGrap
         private final double vwap;
         private final double quantity;
         private final Instant timeStamp;
+        private final short decimalsInPrice;
 
-        public TradeDataPoint(double price, double vwap, double quantity, Instant timeStamp) {
+        public TradeDataPoint(double price, double vwap, double quantity, Instant timeStamp, short decimalsInPrice) {
             this.price = price;
             this.vwap = vwap;
             this.quantity = quantity;
             this.timeStamp = timeStamp;
+            this.decimalsInPrice = decimalsInPrice;
         }
 
         public double getPrice() {
-            return price;
+            return MathUtils.convertToDouble(this.price, this.decimalsInPrice);
         }
 
         public double getVwap() {
-            return vwap;
+            return MathUtils.convertToDouble(this.vwap, this.decimalsInPrice);
         }
 
         public double getQuantity() {

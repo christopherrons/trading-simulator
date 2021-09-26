@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
-public class OrderBookHandler implements ApplicationListener<UpdateOrderBookViewEvent> {
+public class OrderBookViewHandler implements ApplicationListener<UpdateOrderBookViewEvent> {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final static String ORDER_BOOK_ENDPOINT = "/topic/orderBook";
@@ -27,7 +27,7 @@ public class OrderBookHandler implements ApplicationListener<UpdateOrderBookView
     private Instant lastUpdateTime = Instant.now();
 
     @Autowired
-    public OrderBookHandler(SimpMessagingTemplate messagingTemplate) {
+    public OrderBookViewHandler(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 

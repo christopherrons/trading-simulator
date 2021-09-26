@@ -62,9 +62,15 @@ public class MatchingEngine {
     private Trade createTrade(final Order buyOrder, final Order sellOrder) {
         long quantityTraded = quantityTraded(buyOrder.getCurrentQuantity(), sellOrder.getCurrentQuantity());
         if (isBuyOrderTaker(buyOrder, sellOrder)) {
-            return new Trade(buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId(), buyOrder.getInstrumentId());
+            return new Trade(
+                    buyOrder.getPrice(), quantityTraded, buyOrder.getOrderId(),
+                    sellOrder.getOrderId(), tradeService.generateTradeId(), buyOrder.getInstrumentId(), buyOrder.getDecimalsInPrice()
+            );
         } else {
-            return new Trade(sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(), sellOrder.getOrderId(), tradeService.generateTradeId(), sellOrder.getInstrumentId());
+            return new Trade(
+                    sellOrder.getPrice(), quantityTraded, buyOrder.getOrderId(),
+                    sellOrder.getOrderId(), tradeService.generateTradeId(), sellOrder.getInstrumentId(), sellOrder.getDecimalsInPrice()
+            );
         }
     }
 

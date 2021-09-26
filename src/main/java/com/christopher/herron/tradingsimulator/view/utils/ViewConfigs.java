@@ -19,7 +19,7 @@ public class ViewConfigs {
     }
 
     public static int getTradeGraphViewUpdateIntervallInMilliseconds() {
-        return 5000;
+        return 2000;
     }
 
     public static int getTradeTableViewUpdateIntervallInMilliseconds() {

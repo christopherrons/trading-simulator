@@ -4,9 +4,9 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtils {
-    private final static Random randomGenerator = new Random();
     public static final double[] ROUNDING_FACTORS = {1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0};
     public static final int[] ADDING_FACTORS = {1, 10, 100, 1000, 10000, 100000};
+    private final static Random randomGenerator = new Random();
 
     public static double generateRandomNormalPrice(final double mean, final double standardDeviation) {
         return randomGenerator.nextGaussian() * standardDeviation + mean;

@@ -3,9 +3,7 @@ package com.christopher.herron.tradingsimulator.domain.cache;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class TradeCache {

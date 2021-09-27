@@ -27,20 +27,26 @@ public class OrderBookService {
 
     public void addOrderToOrderBook(final Order order) {
         orderBookCache.addOrderToOrderBook(order);
+        updateOrderBookViewNewOrder(order.copy());
+    }
+
+    public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {
+        orderBookCache.updateOrderBookAfterTrade(buyOrder, sellOrder, tradeQuantity);
+        updateOrderBookViewAfterTrade(buyOrder.copy(), sellOrder.copy());
+    }
+
+    private void updateOrderBookViewNewOrder(final Order order) {
         executorService.execute(new Runnable() {
             public void run() {
                 applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this, order));
             }
         });
-
     }
 
-    public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {
-        orderBookCache.updateOrderBookAfterTrade(buyOrder, sellOrder, tradeQuantity);
-
+    private void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellorder) {
         executorService.execute(new Runnable() {
             public void run() {
-                applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this, buyOrder, sellOrder));
+                applicationEventPublisher.publishEvent(new UpdateOrderBookViewEvent(this, buyOrder, sellorder));
             }
         });
     }

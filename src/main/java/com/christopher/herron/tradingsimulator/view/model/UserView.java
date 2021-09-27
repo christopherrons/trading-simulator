@@ -14,9 +14,9 @@ import java.util.TreeMap;
 
 public class UserView {
 
-    public final TreeMap<Long, Order> orderIdToOpenOrders = new TreeMap<>();
-    public final TreeMap<Long, Order> orderIdToFilledOrders = new TreeMap<>();
-    public final TreeMap<Long, UserTradeData> tradeIdToTrade = new TreeMap<>();
+    private final TreeMap<Long, Order> orderIdToOpenOrders = new TreeMap<>();
+    private final TreeMap<Long, Order> orderIdToFilledOrders = new TreeMap<>();
+    private final TreeMap<Long, UserTradeData> tradeIdToTrade = new TreeMap<>();
     private final int maxUserOrdersInTable = ViewConfigs.getMaxUserOrdersInTable();
 
     public UserView() {
@@ -36,10 +36,8 @@ public class UserView {
                 break;
             case FILLED:
                 orderIdToOpenOrders.remove(order.getOrderId());
-
                 orderIdToFilledOrders.putIfAbsent(order.getOrderId(), order);
                 removeExcessData(orderIdToFilledOrders);
-
                 break;
         }
     }

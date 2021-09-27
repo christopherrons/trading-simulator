@@ -248,6 +248,7 @@ function sendOrderForm() {
     stompClient.send("/app/orderEntry", {}, JSON.stringify({
         'price': $("#price").val(),
         'initialQuantity': $("#quantity").val(),
+        'currentQuantity': $("#quantity").val(),
         'orderType': $("input[type='radio'][name='order-type']:checked").val()
     }));
 }

@@ -9,13 +9,13 @@ import java.util.List;
 public class TradeTableView {
 
     private final static int maxTradesInTable = ViewConfigs.getMaxTradesInTable();
-    public final List<Trade> trades = new ArrayList<>();
+    private final List<Trade> trades = new ArrayList<>();
 
     public TradeTableView() {
     }
 
     public void updateTradeTableData(final Trade trade) {
-        if (trades.size() > maxTradesInTable) {
+        if (trades.size() >= maxTradesInTable) {
             trades.remove(maxTradesInTable - 1);
         }
         trades.add(0, trade);

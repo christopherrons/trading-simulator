@@ -10,6 +10,7 @@ import java.util.Date;
 
 public class Order implements Comparable<Order> {
 
+    private final short decimalsInPrice = SimulationUtils.getDecimalsInPrice();
     private long initialQuantity;
     private long currentQuantity;
     private short orderType;
@@ -19,23 +20,26 @@ public class Order implements Comparable<Order> {
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
     private String instrumentId;
-    private final short decimalsInPrice = SimulationUtils.getDecimalsInPrice();
 
     public Order() {
     }
 
-    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long quantity, double price, short orderType, String instrumentId) {
+    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long currentQuantity, long initialQuantity, double price, short orderType, String instrumentId) {
         Order order = new Order();
         order.setOrderId(orderId);
         order.setUserId(userId);
         order.setOrderStatus(orderStatus);
         order.setTimeStamp(timeStamp);
-        order.setCurrentQuantity(quantity);
-        order.setInitialQuantity(quantity);
+        order.setCurrentQuantity(currentQuantity);
+        order.setInitialQuantity(initialQuantity);
         order.setPrice(price);
         order.setOrderType(orderType);
         order.setInstrumentId(instrumentId);
         return order;
+    }
+
+    public Order copy() {
+        return valueOf(this.orderId, this.userId, this.orderStatus, this.timeStamp, this.currentQuantity, this.initialQuantity, getPriceAsDouble(), this.orderType, this.instrumentId);
     }
 
     public short getOrderType() {
@@ -51,7 +55,6 @@ public class Order implements Comparable<Order> {
     }
 
     public void setInitialQuantity(long initialQuantity) {
-        this.currentQuantity = initialQuantity;
         this.initialQuantity = initialQuantity;
     }
 

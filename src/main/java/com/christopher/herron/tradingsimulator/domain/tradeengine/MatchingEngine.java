@@ -24,6 +24,8 @@ public class MatchingEngine {
     }
 
     public void matchOrders(final String instrumentId) {
+        long tempBuyOrderId = 0;
+        long tempSellOrderId = 0;
         while (true) {
             Order buyOrder = orderBookService.getBestBuyOrder(instrumentId);
             Order sellOrder = orderBookService.getBestSellOrder(instrumentId);
@@ -34,6 +36,8 @@ public class MatchingEngine {
 
             if (isMatch(buyOrder.getPrice(), sellOrder.getPrice())) {
                 runPostTradeProcess(buyOrder, sellOrder);
+                tempBuyOrderId = buyOrder.getOrderId();
+                tempSellOrderId = sellOrder.getOrderId();
 
             } else {
                 break;

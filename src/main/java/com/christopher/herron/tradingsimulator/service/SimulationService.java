@@ -38,7 +38,7 @@ public class SimulationService {
         if (tradeSimulation.getOrdersPerSecond() == 0) {
             runFastSimulation(tradeSimulation);
         } else {
-            runThrottledSimulationTest(tradeSimulation);
+            runThrottledSimulation(tradeSimulation);
         }
     }
 
@@ -53,40 +53,13 @@ public class SimulationService {
         double sleepTime = 1000D / tradeSimulation.getOrdersPerSecond();
         for (int i = 0; i < tradeSimulation.getOrdersToGenerate(); i++) {
             final long generatationStart = Instant.now().toEpochMilli();
-
             Order order = generateOrder();
             orderService.addOrder(order);
-
             final long generationTime = Instant.now().toEpochMilli() - generatationStart;
             if (sleepTime - generationTime > 0) {
                 Thread.sleep((long) sleepTime - generationTime);
             }
         }
-    }
-
-    private void runThrottledSimulationTest(TradeSimulation tradeSimulation) throws InterruptedException {
-        double sleepTime = 1000000D / tradeSimulation.getOrdersPerSecond();
-        long ordersGenerated = 0;
-        long lastGeneratedTimeStamp = System.nanoTime();
-        long generationTime = System.nanoTime();
-        long generationStartTime = System.nanoTime();
-        while (ordersGenerated < tradeSimulation.getOrdersToGenerate()) {
-
-            if (generateIntervalPassed(lastGeneratedTimeStamp, sleepTime, generationTime)) {
-                generationStartTime = System.nanoTime();
-                Order order = generateOrder();
-                orderService.addOrder(order);
-                ordersGenerated++;
-                lastGeneratedTimeStamp = System.nanoTime();
-
-                generationTime = System.nanoTime() - generationStartTime;
-            }
-
-        }
-    }
-
-    private boolean generateIntervalPassed(long lastGeneratedTimeStamp, double sleepTime, long generatioTime) {
-        return System.nanoTime() - lastGeneratedTimeStamp > sleepTime - generatioTime;
     }
 
     private void initTradeBots() {
@@ -99,12 +72,14 @@ public class SimulationService {
 
     private Order generateOrder() {
         short orderType = SimulationUtils.getRandomOrderType();
+        long quantity = SimulationUtils.generateQuantity();
         return Order.valueOf(
                 orderBookService.generateOrderId(),
                 tradeBotUsers.get(SimulationUtils.getRandomTradeBot(nrOfBots - 1)).getUserId(),
                 OrderStatusEnum.OPEN.getValue(),
                 Instant.now(),
-                SimulationUtils.generateQuantity(),
+                quantity,
+                quantity,
                 orderType == 1 ? SimulationUtils.generateRandomNormalPrice(tradeService.getLatestPrice() - 2, 3) :
                         SimulationUtils.generateRandomNormalPrice(tradeService.getLatestPrice() + 2, 3),
                 orderType,

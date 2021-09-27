@@ -20,9 +20,9 @@ public class TradeGraphViewHandler implements ApplicationListener<UpdateTradGrap
     private final int updateIntervallInMilliseconds = ViewConfigs.getTradeGraphViewUpdateIntervallInMilliseconds();
     private Instant lastUpdateTime = Instant.now();
     private long intervalAccumelatedPrice = 0;
-    private long intervalAccumelatedQuantity = 0;
+    private long sessionAccumelatedQuantity = 0;
     private int intervalTotalTrades = 0;
-    private long intervalWeightedPrice = 0;
+    private long sessionWeightedPrice = 0;
 
     @Autowired
     public TradeGraphViewHandler(SimpMessagingTemplate messagingTemplate) {
@@ -49,7 +49,7 @@ public class TradeGraphViewHandler implements ApplicationListener<UpdateTradGrap
     }
 
     private double calculateVwap() {
-        return (double) intervalWeightedPrice / intervalAccumelatedQuantity;
+        return (double) sessionWeightedPrice / sessionAccumelatedQuantity;
     }
 
     private double calculateIntervalAveragePrice() {
@@ -59,16 +59,14 @@ public class TradeGraphViewHandler implements ApplicationListener<UpdateTradGrap
 
     private void updateIntervalValues(Trade trade) {
         intervalAccumelatedPrice = intervalAccumelatedPrice + trade.getPrice();
-        intervalAccumelatedQuantity = intervalAccumelatedQuantity + trade.getQuantity();
-        intervalWeightedPrice = intervalWeightedPrice + (trade.getQuantity() * trade.getPrice());
+        sessionAccumelatedQuantity = sessionAccumelatedQuantity + trade.getQuantity();
+        sessionWeightedPrice = sessionWeightedPrice + (trade.getQuantity() * trade.getPrice());
         intervalTotalTrades = intervalTotalTrades + 1;
     }
 
     private void resetIntervalValues() {
         intervalAccumelatedPrice = 0;
-        intervalAccumelatedQuantity = 0;
         intervalTotalTrades = 0;
-        intervalWeightedPrice = 0;
     }
 
     private boolean isUpdateIntervalMet() {

@@ -54,16 +54,9 @@ public class OrderBookView {
 
     private List<Order> getTopOrders(final TreeMap<Long, LinkedList<Order>> orderIdToOrders, final OrderTypeEnum orderType) {
         List<Order> topOrders = new ArrayList<>();
-
-        for (Iterator<Map.Entry<Long, LinkedList<Order>>> orderIdToOrdersIterator = orderIdToOrders.entrySet().iterator(); orderIdToOrdersIterator.hasNext(); ) {
-            Map.Entry<Long, LinkedList<Order>> orderIdToOrdersEntrySet = orderIdToOrdersIterator.next();
-
+        for (Map.Entry<Long, LinkedList<Order>> orderIdToOrdersEntrySet : orderIdToOrders.entrySet()) {
             if (areTopOrdersFound(topOrders, orderIdToOrdersEntrySet.getValue())) {
                 break;
-            }
-
-            if (orderIdToOrdersEntrySet.getValue().isEmpty()) {
-                //   orderIdToOrdersIterator.remove();
             }
         }
 
@@ -74,13 +67,8 @@ public class OrderBookView {
     }
 
     private boolean areTopOrdersFound(List<Order> topOrders, LinkedList<Order> currentOrders) {
-        for (Iterator<Order> orderIterator = currentOrders.iterator(); orderIterator.hasNext(); ) {
-            Order currentOrder = orderIterator.next();
-            if (currentOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
-                //  orderIterator.remove();
-            } else {
-                topOrders.add(currentOrder);
-            }
+        for (Order currentOrder : currentOrders) {
+            topOrders.add(currentOrder);
             if (topOrders.size() == maxOrderbookOrdersInTable) {
                 return true;
             }

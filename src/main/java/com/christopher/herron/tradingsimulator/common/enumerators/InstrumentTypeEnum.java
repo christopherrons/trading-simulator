@@ -1,6 +1,6 @@
 package com.christopher.herron.tradingsimulator.common.enumerators;
 
-public enum InstrumentType {
+public enum InstrumentTypeEnum {
     NONE((short) 0),
     EQUITY((short) 1),
     OPTION((short) 2),
@@ -8,11 +8,11 @@ public enum InstrumentType {
 
     private final short value;
 
-    InstrumentType(short value) {
+    InstrumentTypeEnum(short value) {
         this.value = value;
     }
 
-    public static InstrumentType fromValue(short value) {
+    public static InstrumentTypeEnum fromValue(short value) {
         switch (value) {
             case 1:
                 return EQUITY;

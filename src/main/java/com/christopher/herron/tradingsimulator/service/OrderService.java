@@ -41,7 +41,7 @@ public class OrderService {
                 userService.updateUserOrderTableView(order);
             }
 
-            orderBookService.addOrderToOrderBook(order);
+            orderBookService.writeToOrderBook(order);
         } finally {
             readWriteLock.writeLock().unlock();
         }

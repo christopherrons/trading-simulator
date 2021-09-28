@@ -20,11 +20,12 @@ public class Order implements Comparable<Order> {
     private String userId;
     private short orderStatus = OrderStatusEnum.OPEN.getValue();
     private String instrumentId;
+    private short orderAction;
 
     public Order() {
     }
 
-    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long currentQuantity, long initialQuantity, double price, short orderType, String instrumentId) {
+    public static Order valueOf(long orderId, String userId, short orderStatus, Instant timeStamp, long currentQuantity, long initialQuantity, double price, short orderType, String instrumentId, short orderAction) {
         Order order = new Order();
         order.setOrderId(orderId);
         order.setUserId(userId);
@@ -35,11 +36,12 @@ public class Order implements Comparable<Order> {
         order.setPrice(price);
         order.setOrderType(orderType);
         order.setInstrumentId(instrumentId);
+        order.setOrderAction(orderAction);
         return order;
     }
 
     public Order copy() {
-        return valueOf(this.orderId, this.userId, this.orderStatus, this.timeStamp, this.currentQuantity, this.initialQuantity, getPriceAsDouble(), this.orderType, this.instrumentId);
+        return valueOf(this.orderId, this.userId, this.orderStatus, this.timeStamp, this.currentQuantity, this.initialQuantity, getPriceAsDouble(), this.orderType, this.instrumentId, this.orderAction);
     }
 
     public short getOrderType() {
@@ -128,6 +130,14 @@ public class Order implements Comparable<Order> {
 
     public double getPriceAsDouble() {
         return MathUtils.convertToDouble(this.price, this.decimalsInPrice);
+    }
+
+    public short getOrderAction() {
+        return orderAction;
+    }
+
+    public void setOrderAction(short orderAction) {
+        this.orderAction = orderAction;
     }
 
     public String getTimeStampHourMiniteSecond() {

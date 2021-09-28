@@ -1,5 +1,6 @@
 package com.christopher.herron.tradingsimulator.service;
 
+import com.christopher.herron.tradingsimulator.common.enumerators.OrderAction;
 import com.christopher.herron.tradingsimulator.domain.cache.OrderBookCache;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
@@ -24,9 +25,16 @@ public class OrderBookService {
         this.orderBookCache = orderBookCache;
     }
 
-    public void addOrderToOrderBook(final Order order) {
-        orderBookCache.addOrderToOrderBook(order);
-        updateOrderBookViewNewOrder(order.copy());
+    public void writeToOrderBook(final Order order) {
+        switch (OrderAction.fromValue(order.getOrderAction())) {
+            case ADD:
+                orderBookCache.addOrderToOrderBook(order);
+                updateOrderBookViewNewOrder(order.copy());
+                break;
+            case DELETE:
+            case UPDATE:
+            default:
+        }
     }
 
     public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, long tradeQuantity) {

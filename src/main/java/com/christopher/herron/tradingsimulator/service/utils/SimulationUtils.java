@@ -10,7 +10,7 @@ public class SimulationUtils {
     }
 
     public static double generateRandomNormalBuyPrice(double latestTradePrice) {
-        return SimulationUtils.generateRandomNormalPrice(latestTradePrice - 2,3);
+        return SimulationUtils.generateRandomNormalPrice(latestTradePrice - 2, 3);
     }
 
     public static double generateRandomNormalSellPrice(double latestTradePrice) {

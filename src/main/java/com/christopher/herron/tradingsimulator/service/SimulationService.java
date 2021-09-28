@@ -1,5 +1,6 @@
 package com.christopher.herron.tradingsimulator.service;
 
+import com.christopher.herron.tradingsimulator.common.enumerators.OrderAction;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.TradeSimulation;
@@ -86,7 +87,8 @@ public class SimulationService {
                 quantity,
                 orderType == 1 ? SimulationUtils.generateRandomNormalBuyPrice(tradeService.getLatestPrice()) : SimulationUtils.generateRandomNormalSellPrice(tradeService.getLatestPrice()),
                 orderType,
-                SimulationUtils.getSimulationInstrumentId()
+                SimulationUtils.getSimulationInstrumentId(),
+                OrderAction.ADD.getValue()
         );
     }
 }

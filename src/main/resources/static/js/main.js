@@ -246,6 +246,7 @@ function sendOrderForm() {
         'price': $("#price").val(),
         'initialQuantity': $("#quantity").val(),
         'currentQuantity': $("#quantity").val(),
+        'orderAction': "1",
         'orderType': $("input[type='radio'][name='order-type']:checked").val()
     }));
 }

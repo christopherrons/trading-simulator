@@ -24,7 +24,6 @@ public class OrderBookService {
         this.orderBookCache = orderBookCache;
     }
 
-
     public void addOrderToOrderBook(final Order order) {
         orderBookCache.addOrderToOrderBook(order);
         updateOrderBookViewNewOrder(order.copy());

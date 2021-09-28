@@ -42,7 +42,7 @@ public class OrderBookViewHandler implements ApplicationListener<UpdateOrderBook
 
     private void updateOrderBookViewAfterTrade(UpdateOrderBookViewEvent updateOrderBookViewEvent) {
         OrderBookView orderBookView = instrumentIdToOrderBookView.computeIfAbsent(updateOrderBookViewEvent.getBuyOrder().getInstrumentId(), key -> new OrderBookView());
-        orderBookView.updateOrderBookTable(updateOrderBookViewEvent.getBuyOrder(), updateOrderBookViewEvent.getSellOrder());
+        orderBookView.updateOrderBookViewAfterTrade(updateOrderBookViewEvent.getBuyOrder(), updateOrderBookViewEvent.getSellOrder());
 
         if (isUpdateIntervalMet() || updateOrderBookViewEvent.getBuyOrder().getUserId().equals(SimulationUtils.getSimulationUser()) || updateOrderBookViewEvent.getSellOrder().getUserId().equals(SimulationUtils.getSimulationUser())) {
             updateView(ORDER_BOOK_ENDPOINT, orderBookView.getOrderBookTable());

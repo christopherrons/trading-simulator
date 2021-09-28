@@ -9,6 +9,14 @@ public class SimulationUtils {
         return MathUtils.generateRandomUniformNumber(0, upperBound);
     }
 
+    public static double generateRandomNormalBuyPrice(double latestTradePrice) {
+        return SimulationUtils.generateRandomNormalPrice(latestTradePrice - 2,3);
+    }
+
+    public static double generateRandomNormalSellPrice(double latestTradePrice) {
+        return SimulationUtils.generateRandomNormalPrice(latestTradePrice + 2, 3);
+    }
+
     public static double generateRandomNormalPrice(double mean, double standardDeviation) {
         return MathUtils.generateRandomNormalPrice(mean, standardDeviation);
     }
@@ -21,7 +29,7 @@ public class SimulationUtils {
 
     public static long generateQuantity() {
         long lowerBound = 100;
-        long upperBound = 1000;
+        long upperBound = 10000;
         return MathUtils.generateRandomUniformNumber(lowerBound, upperBound);
     }
 

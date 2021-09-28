@@ -55,10 +55,10 @@
                                id="generate-orders" min="1"
                                placeholder="Number of orders to generate..." type="number" required>
                         <label for="orders-per-second">Orders per Second</label>
-                        <input title="Number of orders per second the simulation should generate, max 800. Set value to 0 to run as fast as possible."
+                        <input title="Number of orders per second the simulation should generate, max 800. For max simulation speed leave blank or set to 0 (not recommended)."
                                class="form-control" id="orders-per-second" min="0" max="500"
                                placeholder="Number of generated orders per second..." type="number"
-                               oninvalid="this.setCustomValidity('Value has to be in range 0-500. For max simulation speed leave blank or set to 0')">
+                               oninvalid="this.setCustomValidity('Value has to be in range 0-500. For max simulation speed leave blank or set to 0 (not recommended)')">
                     </div>
                     <button class="btn btn-default" id="submit-simulation-form" type="submit">Run Simulation</button>
                 </form>

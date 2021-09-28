@@ -132,24 +132,6 @@ nav li a:hover {
     padding: 12px 15px;
 }
 
-/*.user-order-data-container .table-data tbody, .user-order-data-container table thead {
-    display: block;
-}
-
-.user-order-data-container .table-data tbody {
-    overflow: auto;
-    height: 300px;
-}
-
-.user-order-data-container .table-data td {
-    width: 300px;
-}
-
-
-.user-order-data-container .table-data th {
-    width: 300px;
-}*/
-
 /* --- .user-order-data --- */
 .user-order-data-container ul {
     margin: 0;
@@ -211,8 +193,14 @@ button[type=submit] {
     float: right;
 }
 
+#create-simulation-form button[type=submit] {
+    width: 70%;
+}
+
 button[type=submit]:hover {
-    background-color: #45a049;
+    background-color: #4d9b76;
+    color: black;
+    transition: 0.5s;
 }
 
 

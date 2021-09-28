@@ -90,12 +90,9 @@ function validateOrderForm() {
         return false;
     }
 
-    const quantity = $.trim($('#quantity').val());
-    if (!quantity) {
-        return false;
-    }
+    return $.trim($('#quantity').val());
 
-    return true;
+
 }
 
 function validateSimulationForm() {

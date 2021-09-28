@@ -12,38 +12,25 @@ public class OrderBookView {
 
     private final static int maxOrderbookOrdersInTable = ViewConfigs.getMaxOrderbookOrdersInTable();
     private final TreeMap<Long, LinkedList<Order>> buyPriceToOpenOrders = new TreeMap<>(Collections.reverseOrder());
-    private final TreeMap<Long, LinkedList<Order>> tempBuy = new TreeMap<>(Collections.reverseOrder());
-    private final TreeMap<Long, LinkedList<Order>> tempBuyRemoved = new TreeMap<>(Collections.reverseOrder());
-
     private final TreeMap<Long, LinkedList<Order>> sellPriceToOpenOrders = new TreeMap<>();
-    private final TreeMap<Long, LinkedList<Order>> tempSell = new TreeMap<>();
-    private final TreeMap<Long, LinkedList<Order>> tempSellRemoved = new TreeMap<>();
 
     public OrderBookView() {
     }
 
-    public void updateOrderBookTable(final Order buyOrder, final Order sellOrder) {
-        Order bestBuyOrder = buyPriceToOpenOrders.firstEntry().getValue().getFirst();
-        if (buyOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
-            Order tempBuy = buyPriceToOpenOrders.firstEntry().getValue().removeFirst();
-            tempBuyRemoved.computeIfAbsent(tempBuy.getPrice(), key -> new LinkedList<>()).add(tempBuy.copy());
-            if (buyPriceToOpenOrders.firstEntry().getValue().isEmpty()) {
-                buyPriceToOpenOrders.pollFirstEntry();
+    public void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellOrder) {
+        updateOrderBookViewAfterTrade(buyPriceToOpenOrders, buyOrder);
+        updateOrderBookViewAfterTrade(sellPriceToOpenOrders, sellOrder);
+    }
+
+    private void updateOrderBookViewAfterTrade(final TreeMap<Long, LinkedList<Order>> orders, final Order tradedOrder) {
+        Order order = orders.firstEntry().getValue().getFirst();
+        if (tradedOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
+            orders.firstEntry().getValue().removeFirst();
+            if (orders.firstEntry().getValue().isEmpty()) {
+                orders.pollFirstEntry();
             }
         } else {
-            bestBuyOrder.setCurrentQuantity(buyOrder.getCurrentQuantity());
-        }
-
-        Order bestSellOrder = sellPriceToOpenOrders.firstEntry().getValue().getFirst();
-        if (sellOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
-            Order tempSell = sellPriceToOpenOrders.firstEntry().getValue().removeFirst();
-            tempSellRemoved.computeIfAbsent(tempSell.getPrice(), key -> new LinkedList<>()).add(tempSell.copy());
-            if (sellPriceToOpenOrders.firstEntry().getValue().isEmpty()) {
-                sellPriceToOpenOrders.pollFirstEntry();
-            }
-
-        } else {
-            bestSellOrder.setCurrentQuantity(sellOrder.getCurrentQuantity());
+            order.setCurrentQuantity(tradedOrder.getCurrentQuantity());
         }
     }
 
@@ -51,11 +38,9 @@ public class OrderBookView {
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
                 buyPriceToOpenOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
-                tempBuy.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order.copy());
                 break;
             case SELL:
                 sellPriceToOpenOrders.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order);
-                tempSell.computeIfAbsent(order.getPrice(), key -> new LinkedList<>()).add(order.copy());
                 break;
         }
     }

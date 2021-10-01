@@ -33,7 +33,7 @@ public class OrderBookViewHandler implements ApplicationListener<UpdateOrderBook
 
     @Override
     public void onApplicationEvent(UpdateOrderBookViewEvent updateOrderBookViewEvent) {
-        if (updateOrderBookViewEvent.getNewOrder() == null) {
+        if (updateOrderBookViewEvent.getOrder().getCurrentQuantity() != updateOrderBookViewEvent.getOrder().getInitialQuantity()) {
             updateOrderBookViewAfterTrade(updateOrderBookViewEvent);
         } else {
             updateOrderBookViewNewOrderEntry(updateOrderBookViewEvent);
@@ -41,19 +41,19 @@ public class OrderBookViewHandler implements ApplicationListener<UpdateOrderBook
     }
 
     private void updateOrderBookViewAfterTrade(UpdateOrderBookViewEvent updateOrderBookViewEvent) {
-        OrderBookView orderBookView = instrumentIdToOrderBookView.computeIfAbsent(updateOrderBookViewEvent.getBuyOrder().getInstrumentId(), key -> new OrderBookView());
-        orderBookView.updateOrderBookViewAfterTrade(updateOrderBookViewEvent.getBuyOrder(), updateOrderBookViewEvent.getSellOrder());
+        OrderBookView orderBookView = instrumentIdToOrderBookView.computeIfAbsent(updateOrderBookViewEvent.getOrder().getInstrumentId(), key -> new OrderBookView());
+        orderBookView.updateOrderBookViewAfterTrade(updateOrderBookViewEvent.getOrder());
 
-        if (isUpdateIntervalMet() || updateOrderBookViewEvent.getBuyOrder().getUserId().equals(SimulationUtils.getSimulationUser()) || updateOrderBookViewEvent.getSellOrder().getUserId().equals(SimulationUtils.getSimulationUser())) {
+        if (isUpdateIntervalMet() || updateOrderBookViewEvent.getOrder().getUserId().equals(SimulationUtils.getSimulationUser())) {
             updateView(ORDER_BOOK_ENDPOINT, orderBookView.getOrderBookTable());
         }
     }
 
     private void updateOrderBookViewNewOrderEntry(UpdateOrderBookViewEvent updateOrderBookViewEvent) {
-        OrderBookView orderBookView = instrumentIdToOrderBookView.computeIfAbsent(updateOrderBookViewEvent.getNewOrder().getInstrumentId(), key -> new OrderBookView());
-        orderBookView.updateOrderBookTable(updateOrderBookViewEvent.getNewOrder());
+        OrderBookView orderBookView = instrumentIdToOrderBookView.computeIfAbsent(updateOrderBookViewEvent.getOrder().getInstrumentId(), key -> new OrderBookView());
+        orderBookView.updateOrderBookTable(updateOrderBookViewEvent.getOrder());
 
-        if (isUpdateIntervalMet() || updateOrderBookViewEvent.getNewOrder().getUserId().equals(SimulationUtils.getSimulationUser())) {
+        if (isUpdateIntervalMet() || updateOrderBookViewEvent.getOrder().getUserId().equals(SimulationUtils.getSimulationUser())) {
             updateView(ORDER_BOOK_ENDPOINT, orderBookView.getOrderBookTable());
         }
     }
@@ -64,8 +64,8 @@ public class OrderBookViewHandler implements ApplicationListener<UpdateOrderBook
     }
 
     private boolean isUpdateIntervalMet() {
-        long currenTime = Instant.now().toEpochMilli();
-        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
+        long currentTime = Instant.now().toEpochMilli();
+        return currentTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 }
 

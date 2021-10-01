@@ -92,8 +92,11 @@ public class Order implements Comparable<Order> {
         this.timeStamp = timeStamp;
     }
 
-    public void updateCurrentQuantity(long quantityTraded) {
+    public void decreaseQuantity(long quantityTraded) {
         this.currentQuantity = this.currentQuantity - quantityTraded;
+        if (isOrderFilled()) {
+            setOrderStatus(OrderStatusEnum.FILLED.getValue());
+        }
     }
 
     public boolean isOrderFilled() {

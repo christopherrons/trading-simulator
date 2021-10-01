@@ -1,21 +1,21 @@
 package com.christopher.herron.tradingsimulator.common.enumerators;
 
-public enum OrderAction {
+public enum OrderActionEnum {
     NONE((short) 0),
 
     ADD((short) 1),
 
     UPDATE((short) 2),
 
-    DELETE((short) 3);;
+    DELETE((short) 3);
 
     private final short value;
 
-    OrderAction(short value) {
+    OrderActionEnum(short value) {
         this.value = value;
     }
 
-    public static OrderAction fromValue(short value) {
+    public static OrderActionEnum fromValue(short value) {
         switch (value) {
             case 1:
                 return ADD;

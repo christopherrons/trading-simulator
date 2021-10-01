@@ -1,6 +1,5 @@
 package com.christopher.herron.tradingsimulator.view.model;
 
-import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.view.utils.DataTableWrapper;
@@ -17,14 +16,21 @@ public class OrderBookView {
     public OrderBookView() {
     }
 
-    public void updateOrderBookViewAfterTrade(final Order buyOrder, final Order sellOrder) {
-        updateOrderBookViewAfterTrade(buyPriceToOpenOrders, buyOrder);
-        updateOrderBookViewAfterTrade(sellPriceToOpenOrders, sellOrder);
+    public void updateOrderBookViewAfterTrade(final Order order) {
+        switch (OrderTypeEnum.fromValue(order.getOrderType())) {
+            case BUY:
+                updateOrderBookViewAfterTrade(buyPriceToOpenOrders, order);
+                break;
+            case SELL:
+                updateOrderBookViewAfterTrade(sellPriceToOpenOrders, order);
+                break;
+        }
+
     }
 
     private void updateOrderBookViewAfterTrade(final TreeMap<Long, LinkedList<Order>> orders, final Order tradedOrder) {
         Order order = orders.firstEntry().getValue().getFirst();
-        if (tradedOrder.getOrderStatus() == OrderStatusEnum.FILLED.getValue()) {
+        if (tradedOrder.isOrderFilled()) {
             orders.firstEntry().getValue().removeFirst();
             if (orders.firstEntry().getValue().isEmpty()) {
                 orders.pollFirstEntry();

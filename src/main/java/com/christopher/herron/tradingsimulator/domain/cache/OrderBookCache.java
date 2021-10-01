@@ -1,7 +1,9 @@
 package com.christopher.herron.tradingsimulator.domain.cache;
 
+import com.christopher.herron.tradingsimulator.domain.model.Instrument;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.OrderBook;
+import com.christopher.herron.tradingsimulator.domain.model.ReadOnlyOrderBook;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,21 +18,19 @@ public class OrderBookCache {
     public OrderBookCache() {
     }
 
-    public void addOrderToOrderBook(final Order order) {
-        instrumentIdToOrderBook.computeIfAbsent(order.getInstrumentId(), key -> new OrderBook()).addOrderToOrderBook(order);
+    public void addOrderToOrderBook(final Order order, final Instrument instrument) {
+        instrumentIdToOrderBook.computeIfAbsent(instrument.getInstrumentId(), key -> OrderBook.createOrderBook(key, instrument.getMatchingAlgorithm()))
+                .addOrderToOrderBook(order);
+
         totalNumberOfOrders++;
     }
 
-    public void updateOrderBookAfterTrade(final Order buyOrder, final Order sellOrder, final long quantityTraded) {
-        instrumentIdToOrderBook.get(buyOrder.getInstrumentId()).updateOrderBookAfterTrade(buyOrder, sellOrder, quantityTraded);
+    public void removeOrder(final Order order) {
+        instrumentIdToOrderBook.get(order.getInstrumentId()).removeOrder(order.getOrderId());
     }
 
-    public Order getBestBuyOrder(final String instrumentId) {
-        return !instrumentIdToOrderBook.containsKey(instrumentId) ? null : instrumentIdToOrderBook.get(instrumentId).getBestBuyOrder();
-    }
-
-    public Order getBestSellOrder(final String instrumentId) {
-        return !instrumentIdToOrderBook.containsKey(instrumentId) ? null : instrumentIdToOrderBook.get(instrumentId).getBestSellOrder();
+    public ReadOnlyOrderBook getOrderBook(final String instrumentId) {
+        return instrumentIdToOrderBook.get(instrumentId);
     }
 
     public long generateOrderId() {

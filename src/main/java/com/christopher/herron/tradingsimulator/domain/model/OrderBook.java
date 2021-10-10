@@ -11,7 +11,7 @@ public abstract class OrderBook implements ReadOnlyOrderBook {
         }
     }
 
-    public abstract void addOrderToOrderBook(final Order order);
+    public abstract void addOrder(final Order order);
 
     public abstract void removeOrder(final long orderId);
 }

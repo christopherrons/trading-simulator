@@ -32,6 +32,6 @@ public class OrderService {
             userService.updateUserOrderTableView(order);
         }
 
-        orderBookService.writeToOrderBook(order);
+        orderBookService.updateOrderBook(order);
     }
 }

@@ -22,7 +22,7 @@ public class FifoOrderBook extends OrderBook {
     }
 
     @Override
-    public void addOrderToOrderBook(final Order order) {
+    public void addOrder(final Order order) {
         switch (OrderTypeEnum.fromValue(order.getOrderType())) {
             case BUY:
                 Limit limit = priceToBuyLimits.computeIfAbsent(order.getPrice(), Limit::new);

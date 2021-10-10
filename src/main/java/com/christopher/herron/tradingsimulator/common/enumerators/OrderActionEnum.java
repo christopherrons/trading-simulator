@@ -5,7 +5,7 @@ public enum OrderActionEnum {
 
     ADD((short) 1),
 
-    UPDATE((short) 2),
+    MODIFY((short) 2),
 
     DELETE((short) 3);
 
@@ -20,7 +20,7 @@ public enum OrderActionEnum {
             case 1:
                 return ADD;
             case 2:
-                return UPDATE;
+                return MODIFY;
             case 3:
                 return DELETE;
             default:

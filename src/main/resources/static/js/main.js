@@ -91,8 +91,6 @@ function validateOrderForm() {
     }
 
     return $.trim($('#quantity').val());
-
-
 }
 
 function validateSimulationForm() {
@@ -105,6 +103,7 @@ function validateSimulationForm() {
     if (parseFloat(ordersPerSecond) > 5000) {
         return false;
     }
+
     if (!ordersPerSecond) {
         $('#orders-per-second').val("0");
     }
@@ -117,24 +116,31 @@ function connectWebsocket() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
+
         stompClient.subscribe('/topic/openOrders', function (openOrders) {
             updateUserOpenOrders(JSON.parse(openOrders.body).dataList);
         });
+
         stompClient.subscribe('/topic/filledOrders', function (filledOrders) {
             updateUserFilledOrders(JSON.parse(filledOrders.body).dataList);
         });
+
         stompClient.subscribe('/topic/userTrades', function (userTrades) {
             updateUserTrades(JSON.parse(userTrades.body).dataList);
         });
+
         stompClient.subscribe('/topic/orderBook', function (orderBook) {
             updateOrderBook(JSON.parse(orderBook.body).dataList);
         });
+
         stompClient.subscribe('/topic/trades', function (trades) {
             updateTrades(JSON.parse(trades.body).dataList);
         });
+
         stompClient.subscribe('/topic/tradeGraph', function (tradeDataPoint) {
             updatePriceGraph(JSON.parse(tradeDataPoint.body));
         });
+
         stompClient.subscribe('/topic/tradeMetrics', function (metrics) {
             updateTradeEngineMetrics(JSON.parse(metrics.body));
         });

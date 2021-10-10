@@ -40,7 +40,6 @@ public class UserService {
     }
 
     public void updateUserOrderTableView(final List<Pair<Order, Trade>> userOrderTradePairs) {
-
         executorService.execute(new Runnable() {
             public void run() {
                 for (Pair<Order, Trade> userOrderTradePair : userOrderTradePairs) {

@@ -20,12 +20,12 @@ public class OrderBookCache {
 
     public void addOrderToOrderBook(final Order order, final Instrument instrument) {
         instrumentIdToOrderBook.computeIfAbsent(instrument.getInstrumentId(), key -> OrderBook.createOrderBook(key, instrument.getMatchingAlgorithm()))
-                .addOrderToOrderBook(order);
+                .addOrder(order);
 
         totalNumberOfOrders++;
     }
 
-    public void removeOrder(final Order order) {
+    public void removeOrderFromOrderBook(final Order order) {
         instrumentIdToOrderBook.get(order.getInstrumentId()).removeOrder(order.getOrderId());
     }
 

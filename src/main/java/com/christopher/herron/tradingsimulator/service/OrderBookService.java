@@ -38,7 +38,7 @@ public class OrderBookService {
         this.userService = userService;
     }
 
-    public void writeToOrderBook(final Order order) {
+    public void updateOrderBook(final Order order) {
         readWriteLock.writeLock().lock();
         try {
             switch (OrderActionEnum.fromValue(order.getOrderAction())) {
@@ -48,9 +48,9 @@ public class OrderBookService {
                     matchOrders(orderBookCache.getOrderBook(order.getInstrumentId()));
                     break;
                 case DELETE:
-                    orderBookCache.removeOrder(order);
+                    orderBookCache.removeOrderFromOrderBook(order);
                     break;
-                case UPDATE:
+                case MODIFY:
                 default:
             }
         } finally {
@@ -72,7 +72,7 @@ public class OrderBookService {
         for (Order matchedOrder : matchedOrders) {
             if (matchedOrder.isOrderFilled()) {
                 matchedOrder.setOrderAction(OrderActionEnum.DELETE.getValue());
-                writeToOrderBook(matchedOrder);
+                updateOrderBook(matchedOrder);
             }
             updateOrderBookView(matchedOrder.copy());
         }

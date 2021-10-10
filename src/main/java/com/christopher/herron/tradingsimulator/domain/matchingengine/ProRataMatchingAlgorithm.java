@@ -3,10 +3,8 @@ package com.christopher.herron.tradingsimulator.domain.matchingengine;
 import com.christopher.herron.tradingsimulator.domain.model.Limit;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.OrderBookEntry;
-import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.domain.orderbook.ReadOnlyOrderBook;
 import com.christopher.herron.tradingsimulator.service.TradeService;
-import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
@@ -40,6 +38,16 @@ public class ProRataMatchingAlgorithm extends MatchingAlgorithm {
         Order buyOrder = buyOrderBookEntry.getOrder();
         Order sellOrder = sellOrderBookEntry.getOrder();
 
+        if (!isBuyOrderTaker(buyOrder, sellOrder)) {
+            matchBuyOrders(buyOrder, sellOrder, buyLimit, sellLimit, buyOrderBookEntry, buyLimitIterator, matchingAlgorithmResults);
+        } else {
+            matchSellOrders(buyOrder, sellOrder, buyLimit, sellLimit, sellOrderBookEntry, sellLimitIterator, matchingAlgorithmResults);
+        }
+
+        return matchingAlgorithmResults;
+    }
+
+    private void matchBuyOrders(Order buyOrder, final Order sellOrder, Limit buyLimit, final Limit sellLimit, OrderBookEntry buyOrderBookEntry, final Iterator<Limit> buyLimitIterator, final MatchingAlgorithmResults matchingAlgorithmResults) {
         do {
 
             if (isMatch(buyOrder, sellOrder, buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity())) {
@@ -48,22 +56,61 @@ public class ProRataMatchingAlgorithm extends MatchingAlgorithm {
                 break;
             }
 
-            buyOrderBookEntry = getNextOrderBookEntry(buyLimitIterator, buyOrderBookEntry);
+            if (isLimitEmpty(buyOrderBookEntry)) {
+                buyLimit.decreaseLimitQuantity(Math.min(buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity()));
+                if (buyLimitIterator.hasNext()) {
+                    buyLimit = buyLimitIterator.next();
+                    buyOrderBookEntry = buyLimit.head;
+                } else {
+                    buyOrderBookEntry = null;
+                }
+            } else {
+                buyOrderBookEntry = buyOrderBookEntry.next;
+            }
+
             if (buyOrderBookEntry == null) {
+                sellLimit.decreaseLimitQuantity(Math.min(buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity()));
                 break;
             }
             buyOrder = buyOrderBookEntry.getOrder();
 
+            if (sellOrder.isOrderFilled()) {
+                sellLimit.decreaseLimitQuantity(Math.min(buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity()));
+                break;
+            }
+        } while (true);
+    }
 
-            sellOrderBookEntry = getNextOrderBookEntry(sellLimitIterator, sellOrderBookEntry);
+    private void matchSellOrders(final Order buyOrder, Order sellOrder, final Limit buyLimit, Limit sellLimit, OrderBookEntry sellOrderBookEntry, final Iterator<Limit> sellLimitIterator, final MatchingAlgorithmResults matchingAlgorithmResults) {
+        do {
+
+            if (isMatch(buyOrder, sellOrder, buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity())) {
+                addMatchingResults(matchingAlgorithmResults, buyOrder, sellOrder, buyLimit, sellLimit);
+            } else {
+                break;
+            }
+
+            if (buyOrder.isOrderFilled()) {
+                buyLimit.decreaseLimitQuantity(Math.min(buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity()));
+                sellLimit.decreaseLimitQuantity(Math.min(buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity()));
+                break;
+            }
+
+            if (isLimitEmpty(sellOrderBookEntry)) {
+                sellLimit.decreaseLimitQuantity(Math.min(buyLimit.getTotalLimitQuantity(), sellLimit.getTotalLimitQuantity()));
+                if (sellLimitIterator.hasNext()) {
+                    sellLimit = sellLimitIterator.next();
+                    sellOrderBookEntry = sellLimit.head;
+                }
+            } else {
+                sellOrderBookEntry = sellOrderBookEntry.next;
+            }
+
             if (sellOrderBookEntry == null) {
                 break;
             }
             sellOrder = sellOrderBookEntry.getOrder();
-
         } while (true);
-
-        return matchingAlgorithmResults;
     }
 
 
@@ -73,12 +120,12 @@ public class ProRataMatchingAlgorithm extends MatchingAlgorithm {
         buyOrder.decreaseQuantity(quantityTraded);
 
       /*  Trade trade = createTrade(quantityTraded, buyOrder, sellOrder, tradeService);
-        matchingAlgorithmResults.addTrade(trade);
+        matchingAlgorithmResults.addTrade(trade);*/
 
         matchingAlgorithmResults.addMatchedOrder(buyOrder);
         matchingAlgorithmResults.addMatchedOrder(sellOrder);
 
-        if (buyOrder.getUserId().equals(SimulationUtils.getSimulationUser())) {
+        /*   if (buyOrder.getUserId().equals(SimulationUtils.getSimulationUser())) {
             matchingAlgorithmResults.addMatchedUserOrderTradePair(buyOrder, trade);
         }
 
@@ -93,17 +140,17 @@ public class ProRataMatchingAlgorithm extends MatchingAlgorithm {
         }
 
         if (isBuyOrderTaker(buyOrder, sellOrder)) {
-            return (sellOrder.getCurrentQuantity() / (double) sellLimitTotalQuanity) * buyOrder.getCurrentQuantity() >= 1;
+            return (sellOrder.getCurrentQuantity() / (double) sellLimitTotalQuanity) * buyOrder.getInitialQuantity() >= 1;
         } else {
-            return (buyOrder.getCurrentQuantity() / (double) buyLimitTotalQuantity) * sellOrder.getCurrentQuantity() >= 1;
+            return (buyOrder.getCurrentQuantity() / (double) buyLimitTotalQuantity) * sellOrder.getInitialQuantity() >= 1;
         }
     }
 
     private long quantityTraded(final Order buyOrder, final Order sellOrder, final long buyLimitTotalQuantity, final long sellLimitTotalQuanity) {
         if (isBuyOrderTaker(buyOrder, sellOrder)) {
-            return Math.round((sellOrder.getCurrentQuantity() / (double) sellLimitTotalQuanity) * buyOrder.getCurrentQuantity());
+            return (long) Math.floor((sellOrder.getCurrentQuantity() / (double) sellLimitTotalQuanity) * buyOrder.getInitialQuantity());
         } else {
-            return Math.round((buyOrder.getCurrentQuantity() / (double) buyLimitTotalQuantity) * sellOrder.getCurrentQuantity());
+            return (long) Math.floor((buyOrder.getCurrentQuantity() / (double) buyLimitTotalQuantity) * sellOrder.getInitialQuantity());
         }
     }
 

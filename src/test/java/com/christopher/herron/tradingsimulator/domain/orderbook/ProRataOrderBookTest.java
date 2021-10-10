@@ -39,7 +39,8 @@ class ProRataOrderBookTest {
 
         assertEquals(9, new ArrayList<>(matchingAlgorithmResults.getMatchedOrders()).get(0).getCurrentQuantity());
         assertEquals(7, new ArrayList<>(matchingAlgorithmResults.getMatchedOrders()).get(2).getCurrentQuantity());
-        assertEquals(4, new ArrayList<>(matchingAlgorithmResults.getMatchedOrders()).get(4).getCurrentQuantity());
+        assertEquals(4, new ArrayList<>(matchingAlgorithmResults.getMatchedOrders()).get(3).getCurrentQuantity());
+        assertEquals(0, new ArrayList<>(matchingAlgorithmResults.getMatchedOrders()).get(1).getCurrentQuantity());
     }
 
     private Order createOrder(final long orderId, final long quantity, final double price, final short orderType) {

@@ -5,10 +5,12 @@ import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.domain.model.User;
 import com.christopher.herron.tradingsimulator.view.event.UpdateUserViewEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,10 +39,13 @@ public class UserService {
         });
     }
 
-    public void updateUserOrderTableView(final Order order, final Trade trade) {
+    public void updateUserOrderTableView(final List<Pair<Order, Trade>> userOrderTradePairs) {
+
         executorService.execute(new Runnable() {
             public void run() {
-                applicationEventPublisher.publishEvent(new UpdateUserViewEvent(this, order, trade));
+                for (Pair<Order, Trade> userOrderTradePair : userOrderTradePairs) {
+                    applicationEventPublisher.publishEvent(new UpdateUserViewEvent(this, userOrderTradePair.getLeft(), userOrderTradePair.getRight()));
+                }
             }
         });
     }

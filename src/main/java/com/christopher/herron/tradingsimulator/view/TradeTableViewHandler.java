@@ -44,7 +44,7 @@ public class TradeTableViewHandler implements ApplicationListener<UpdateTradeTab
     }
 
     private boolean isUpdateIntervalMet() {
-        long currenTime = Instant.now().toEpochMilli();
-        return currenTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
+        long currentTime = Instant.now().toEpochMilli();
+        return currentTime - lastUpdateTime.toEpochMilli() > updateIntervallInMilliseconds;
     }
 }

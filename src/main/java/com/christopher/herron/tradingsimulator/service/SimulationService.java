@@ -1,6 +1,6 @@
 package com.christopher.herron.tradingsimulator.service;
 
-import com.christopher.herron.tradingsimulator.common.enumerators.OrderAction;
+import com.christopher.herron.tradingsimulator.common.enumerators.OrderActionEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderStatusEnum;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
 import com.christopher.herron.tradingsimulator.domain.model.TradeSimulation;
@@ -33,9 +33,6 @@ public class SimulationService {
     }
 
     public void runSimulation(TradeSimulation tradeSimulation) throws InterruptedException {
-        initTradeBots();
-
-
         if (tradeSimulation.getOrdersPerSecond() == 0) {
             runFastSimulation(tradeSimulation);
         } else {
@@ -67,7 +64,7 @@ public class SimulationService {
         }
     }
 
-    private void initTradeBots() {
+    public void initTradeBots() {
         for (int i = 0; i < nrOfBots; i++) {
             User user = new User(String.format("Bot: %s", userService.generateUserId()));
             userService.addUser(user);
@@ -88,7 +85,7 @@ public class SimulationService {
                 orderType == 1 ? SimulationUtils.generateRandomNormalBuyPrice(tradeService.getLatestPrice()) : SimulationUtils.generateRandomNormalSellPrice(tradeService.getLatestPrice()),
                 orderType,
                 SimulationUtils.getSimulationInstrumentId(),
-                OrderAction.ADD.getValue()
+                OrderActionEnum.ADD.getValue()
         );
     }
 }

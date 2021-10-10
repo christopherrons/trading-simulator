@@ -6,26 +6,19 @@ import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 @Service
 public class OrderService {
 
     private final OrderBookService orderBookService;
-    private final MatchingEngineService matchingEngineService;
     private final UserService userService;
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-
 
     @Autowired
-    public OrderService(OrderBookService orderBookService, MatchingEngineService matchingEngineService, UserService userService) {
+    public OrderService(OrderBookService orderBookService, UserService userService) {
         this.orderBookService = orderBookService;
-        this.matchingEngineService = matchingEngineService;
         this.userService = userService;
     }
 
-    public void addOrderEntryFromUser(Order order) {
+    public void addOrderEntryFromUser(final Order order) {
         userService.addUser(new User(SimulationUtils.getSimulationUser()));
 
         order.setUserId(SimulationUtils.getSimulationUser());
@@ -34,18 +27,11 @@ public class OrderService {
         addOrder(order);
     }
 
-    public void addOrder(Order order) {
-        readWriteLock.writeLock().lock();
-        try {
-            if (order.getUserId().equals(SimulationUtils.getSimulationUser())) {
-                userService.updateUserOrderTableView(order);
-            }
-
-            orderBookService.writeToOrderBook(order);
-        } finally {
-            readWriteLock.writeLock().unlock();
+    public void addOrder(final Order order) {
+        if (order.getUserId().equals(SimulationUtils.getSimulationUser())) {
+            userService.updateUserOrderTableView(order);
         }
 
-        matchingEngineService.runMatchingEngine(SimulationUtils.getSimulationInstrumentId());
+        orderBookService.writeToOrderBook(order);
     }
 }

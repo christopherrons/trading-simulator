@@ -1,5 +1,6 @@
 package com.christopher.herron.tradingsimulator.service.utils;
 
+import com.christopher.herron.tradingsimulator.common.enumerators.MatchingAlgorithmEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
 import com.christopher.herron.tradingsimulator.common.utils.MathUtils;
 
@@ -47,5 +48,9 @@ public class SimulationUtils {
 
     public static String getSimulationInstrumentId() {
         return "DOGE";
+    }
+
+    public static String getSimulationMatchingAlgorithm() {
+        return MatchingAlgorithmEnum.FIFO.getValue();
     }
 }

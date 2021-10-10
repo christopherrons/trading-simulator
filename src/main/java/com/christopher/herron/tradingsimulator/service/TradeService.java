@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,6 +23,12 @@ public class TradeService {
     public TradeService(ApplicationEventPublisher applicationEventPublisher, TradeCache tradeCache) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.tradeCache = tradeCache;
+    }
+
+    public void addTrades(final List<Trade> trades) {
+        for (Trade trade : trades) {
+            addTrade(trade);
+        }
     }
 
     public void addTrade(final Trade trade) {

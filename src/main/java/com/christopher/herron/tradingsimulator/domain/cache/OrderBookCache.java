@@ -2,8 +2,8 @@ package com.christopher.herron.tradingsimulator.domain.cache;
 
 import com.christopher.herron.tradingsimulator.domain.model.Instrument;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
-import com.christopher.herron.tradingsimulator.domain.model.OrderBook;
-import com.christopher.herron.tradingsimulator.domain.model.ReadOnlyOrderBook;
+import com.christopher.herron.tradingsimulator.domain.orderbook.OrderBook;
+import com.christopher.herron.tradingsimulator.domain.orderbook.ReadOnlyOrderBook;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

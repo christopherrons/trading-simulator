@@ -4,7 +4,7 @@ import com.christopher.herron.tradingsimulator.common.enumerators.OrderActionEnu
 import com.christopher.herron.tradingsimulator.domain.cache.OrderBookCache;
 import com.christopher.herron.tradingsimulator.domain.matchingengine.MatchingAlgorithmResults;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
-import com.christopher.herron.tradingsimulator.domain.model.ReadOnlyOrderBook;
+import com.christopher.herron.tradingsimulator.domain.orderbook.ReadOnlyOrderBook;
 import com.christopher.herron.tradingsimulator.view.event.UpdateOrderBookViewEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

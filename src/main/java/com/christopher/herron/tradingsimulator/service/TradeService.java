@@ -15,14 +15,17 @@ import java.util.concurrent.Executors;
 @Service
 public class TradeService {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
-    private final TradeCache tradeCache;
+    private ApplicationEventPublisher applicationEventPublisher;
+    private TradeCache tradeCache;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Autowired
     public TradeService(ApplicationEventPublisher applicationEventPublisher, TradeCache tradeCache) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.tradeCache = tradeCache;
+    }
+
+    public TradeService() {
     }
 
     public void addTrades(final List<Trade> trades) {

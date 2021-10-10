@@ -1,7 +1,10 @@
-package com.christopher.herron.tradingsimulator.domain.model;
+package com.christopher.herron.tradingsimulator.domain.orderbook;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.MatchingAlgorithmEnum;
 import com.christopher.herron.tradingsimulator.common.enumerators.OrderTypeEnum;
+import com.christopher.herron.tradingsimulator.domain.model.Limit;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
+import com.christopher.herron.tradingsimulator.domain.model.OrderBookEntry;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -9,15 +12,15 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FifoOrderBook extends OrderBook {
+public class ProRataOrderBook extends OrderBook {
 
     private final Map<Long, OrderBookEntry> orderIdToOrderBookEntry = new ConcurrentHashMap<>();
     private final TreeMap<Long, Limit> priceToBuyLimits = new TreeMap<>(Collections.reverseOrder());
     private final TreeMap<Long, Limit> priceToSellLimits = new TreeMap<>();
-    private final MatchingAlgorithmEnum matchingAlgorithm = MatchingAlgorithmEnum.FIFO;
+    private final MatchingAlgorithmEnum matchingAlgorithm = MatchingAlgorithmEnum.PRORATA;
     private final String instrumentId;
 
-    public FifoOrderBook(String instrumentId) {
+    public ProRataOrderBook(String instrumentId) {
         this.instrumentId = instrumentId;
     }
 
@@ -96,3 +99,4 @@ public class FifoOrderBook extends OrderBook {
         return matchingAlgorithm;
     }
 }
+

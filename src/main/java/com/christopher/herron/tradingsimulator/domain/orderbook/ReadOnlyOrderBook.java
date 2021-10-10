@@ -1,6 +1,7 @@
-package com.christopher.herron.tradingsimulator.domain.model;
+package com.christopher.herron.tradingsimulator.domain.orderbook;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.MatchingAlgorithmEnum;
+import com.christopher.herron.tradingsimulator.domain.model.Limit;
 
 import java.util.Collection;
 

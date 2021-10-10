@@ -1,6 +1,7 @@
 package com.christopher.herron.tradingsimulator.domain.matchingengine;
 
 import com.christopher.herron.tradingsimulator.domain.model.*;
+import com.christopher.herron.tradingsimulator.domain.orderbook.ReadOnlyOrderBook;
 import com.christopher.herron.tradingsimulator.service.TradeService;
 import com.christopher.herron.tradingsimulator.service.utils.SimulationUtils;
 import org.springframework.stereotype.Component;

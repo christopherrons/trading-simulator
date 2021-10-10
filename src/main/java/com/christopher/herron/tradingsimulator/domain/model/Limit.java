@@ -5,6 +5,7 @@ public class Limit {
     private final long price;
     public OrderBookEntry head;
     public OrderBookEntry tail;
+    private long totalLimitQuantity;
 
     public Limit(long price) {
         this.price = price;
@@ -18,9 +19,18 @@ public class Limit {
             tail.next = orderBookEntry;
         }
         tail = orderBookEntry;
+        totalLimitQuantity = totalLimitQuantity + orderBookEntry.getOrder().getInitialQuantity();
     }
 
     public long getPrice() {
         return price;
+    }
+
+    public long getTotalLimitQuantity() {
+        return totalLimitQuantity;
+    }
+
+    public void decreaseLimitQuantity(final long quantityTraded) {
+        this.totalLimitQuantity = this.totalLimitQuantity - quantityTraded;
     }
 }

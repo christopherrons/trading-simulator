@@ -1,6 +1,7 @@
-package com.christopher.herron.tradingsimulator.domain.model;
+package com.christopher.herron.tradingsimulator.domain.orderbook;
 
 import com.christopher.herron.tradingsimulator.common.enumerators.MatchingAlgorithmEnum;
+import com.christopher.herron.tradingsimulator.domain.model.Order;
 
 public abstract class OrderBook implements ReadOnlyOrderBook {
     public static OrderBook createOrderBook(final String instrumentId, final String matchingAlgorithm) {

@@ -3,7 +3,9 @@ package com.christopher.herron.tradingsimulator.common.enumerators;
 public enum MatchingAlgorithmEnum {
     NONE("NONE"),
 
-    FIFO("FIFO");
+    FIFO("FIFO"),
+
+    PRORATA("PRORATA");
 
     private final String value;
 
@@ -15,6 +17,8 @@ public enum MatchingAlgorithmEnum {
         switch (value) {
             case "FIFO":
                 return FIFO;
+            case "PRORATA":
+                return PRORATA;
             default:
                 return NONE;
         }

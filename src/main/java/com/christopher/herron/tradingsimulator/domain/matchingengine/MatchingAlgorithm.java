@@ -2,7 +2,7 @@ package com.christopher.herron.tradingsimulator.domain.matchingengine;
 
 import com.christopher.herron.tradingsimulator.domain.model.Limit;
 import com.christopher.herron.tradingsimulator.domain.model.Order;
-import com.christopher.herron.tradingsimulator.domain.model.ReadOnlyOrderBook;
+import com.christopher.herron.tradingsimulator.domain.orderbook.ReadOnlyOrderBook;
 import com.christopher.herron.tradingsimulator.domain.model.Trade;
 import com.christopher.herron.tradingsimulator.service.TradeService;
 
